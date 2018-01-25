@@ -2,7 +2,7 @@
 
 <img src="https://i.imgur.com/mX3OBNV.png" alt="Seer" width="540" height="185">
 
-SeeR is leveraging the power of deep learning to maximize the security of cloud-connected endpoints. 
+SeeR is leveraging the power of deep learning to maximize the security of cloud-connected embedded devices. 
 
 # Team Members
 Member | Email | Photo
