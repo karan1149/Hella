@@ -21,7 +21,7 @@ Member | Hat | Technical Skills | Non-Technical Skills | Personal Traits | Desir
 --- | --- | --- | --- | --- | --- | ---
 Karan | tbd | tbd | tbd | tbd | tbd | tbd 
 Praty | tbd | tbd | tbd | tbd | tbd | tbd 
-John | tbd | tbd | tbd | tbd | tbd | tbd 
+John | Black/Yellow | Python, AI/ML, quick prototyping | small-team work, international work environments | Planner, group-oriented, cautious | UI/UX research and design, security, AI/ML lifecycle | Presentation, prioritization, systems
 Sarah | Blue | Systems, Testing | Decision making, some project management | Motivated, logical, direct | Embedded systems & cybersecurity / launching attacks | AI 
 Alan | tbd | tbd | tbd | tbd | tbd | tbd 
 
