@@ -22,7 +22,7 @@ Member | Hat | Technical Skills | Non-Technical Skills | Personal Traits | Desir
 Karan | tbd | tbd | tbd | tbd | tbd | tbd 
 Praty | tbd | tbd | tbd | tbd | tbd | tbd 
 John | tbd | tbd | tbd | tbd | tbd | tbd 
-Sarah | tbd | tbd | tbd | tbd | tbd | tbd 
+Sarah | Blue | Systems, Testing | Decision making, some project management | Motivated, logical, direct | Embedded systems & cybersecurity / launching attacks | AI 
 Alan | tbd | tbd | tbd | tbd | tbd | tbd 
 
 
@@ -33,7 +33,7 @@ Alan | tbd | tbd | tbd | tbd | tbd | tbd
 
 3. [Insert documentation platform]
 
-4. [Insert schedule coordination platform]
+4. [Google Calendar](https://calendar.google.com/calendar/embed?src=stanford.edu_rsg43to2epthvtkim72t0des9o%40group.calendar.google.com&ctz=America%2FLos_Angeles)
 
 5. [Insert how we will keep track of tasks]
 
