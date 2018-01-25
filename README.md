@@ -1,17 +1,17 @@
-# Hella
+# Seer
 
 [Insert team logo]
 
 [Insert our team's task]
 
 # Team Members
-Member | Email 
---- | ---
-Karan Singhal | ksinghal@stanford.edu
-Pratyaksh (Praty) Sharma | praty@stanford.edu
-John Kamalu | jkamalu@stanford.edu
-Sarah Tollman  | stollman@stanford.edu
-Alan Flores-Lopez | alanf94@stanford.edu
+Member | Email | Photo
+--- | --- | ---
+Karan Singhal | ksinghal@stanford.edu | TODO
+Pratyaksh (Praty) Sharma | praty@stanford.edu | TODO
+John Kamalu | jkamalu@stanford.edu | TODO
+Sarah Tollman  | stollman@stanford.edu | TODO
+Alan Flores-Lopez | alanf94@stanford.edu | TODO
 
 [Insert photos]
 
@@ -23,7 +23,7 @@ Karan | tbd | tbd | tbd | tbd | tbd | tbd
 Praty | tbd | tbd | tbd | tbd | tbd | tbd 
 John | Black/Yellow | Python, AI/ML, quick prototyping | small-team work, international work environments | Planner, group-oriented, cautious | UI/UX research and design, security, AI/ML lifecycle | Presentation, prioritization, systems
 Sarah | Blue | Systems, Testing | Decision making, some project management | Motivated, logical, direct | Embedded systems & cybersecurity / launching attacks | AI 
-Alan | tbd | tbd | tbd | tbd | tbd | tbd 
+Alan | Black | Python, systems design, systems security, some AI/deep learning | Facilitating groups, managing schedules and tasks | Precise, consistent, reliable, introverted, thinks of the larger picture | IoT security, applying deep learning, group dynamics, managing a budget | Can be fickle, sometimes hard to convince, introverted
 
 
 # Team Communication:
