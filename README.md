@@ -13,8 +13,6 @@ John Kamalu | jkamalu@stanford.edu | <img src="https://i.imgur.com/pebY6bg.jpg" 
 Sarah Tollman  | stollman@stanford.edu | <img src="https://i.imgur.com/2RB416X.jpg" alt="Sarah Tollman" width="157.5" height="164.4">
 Alan Flores-Lopez | alanf94@stanford.edu | <img src="https://i.imgur.com/y6WLV1M.jpg" alt="Alan Flores-Lopez" width="157.5" height="210">
 
-[Insert photos]
-
 # Team Skills Matrix:
 
 Member | Hat | Technical Skills | Non-Technical Skills | Personal Traits | Desired Growth | Weaknesses
