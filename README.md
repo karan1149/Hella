@@ -4,6 +4,8 @@
 
 SeeR is leveraging the power of deep learning to maximize the security of cloud-connected embedded devices. 
 
+[Team Song](https://www.youtube.com/embed/a01QQZyl-_I)
+
 # Team Members
 Member | Email | Photo
 --- | --- | ---
@@ -34,5 +36,3 @@ Alan | Black | Python, systems design, systems security, some AI/deep learning |
 4. [Google Calendar](https://calendar.google.com/calendar/embed?src=stanford.edu_rsg43to2epthvtkim72t0des9o%40group.calendar.google.com&ctz=America%2FLos_Angeles)
 
 5. [Asana](https://app.asana.com/0/536558338426742/calendar) for task management.
-
-6. [Insert any other things we plan to use]
