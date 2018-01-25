@@ -1,8 +1,8 @@
-# Seer
+# SeeR
 
-[Insert team logo]
+<img src="https://i.imgur.com/mX3OBNV.png" alt="Seer" width="540" height="185">
 
-[Insert our team's task]
+SeeR is leveraging the power of deep learning to maximize the security of cloud-connected endpoints. 
 
 # Team Members
 Member | Email | Photo
@@ -11,7 +11,7 @@ Karan Singhal | ksinghal@stanford.edu | TODO
 Pratyaksh (Praty) Sharma | praty@stanford.edu | <img src="https://i.imgur.com/qpkakAD.jpg" alt="Praty Sharma" width="157.5" height="157.5">
 John Kamalu | jkamalu@stanford.edu | TODO
 Sarah Tollman  | stollman@stanford.edu | TODO
-Alan Flores-Lopez | alanf94@stanford.edu | TODO
+Alan Flores-Lopez | alanf94@stanford.edu | <img src="https://i.imgur.com/y6WLV1M.jpg" alt="Alan Flores-Lopez" width="157.5" height="210">
 
 [Insert photos]
 
@@ -31,7 +31,7 @@ Alan | Black | Python, systems design, systems security, some AI/deep learning |
 
 2. Slack: [cs210hella.slack.com](https://cs210hella.slack.com) (sign up [here](https://cs210hella.slack.com/signup)).
 
-3. [Insert documentation platform]
+3. OneNote for [documentation](https://1drv.ms/u/s!Avw6AAp_DwlViFTUTzrlhh6ODdQS).
 
 4. [Google Calendar](https://calendar.google.com/calendar/embed?src=stanford.edu_rsg43to2epthvtkim72t0des9o%40group.calendar.google.com&ctz=America%2FLos_Angeles)
 
