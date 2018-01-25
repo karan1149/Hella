@@ -10,7 +10,7 @@ Member | Email | Photo
 Karan Singhal | ksinghal@stanford.edu | TODO
 Pratyaksh (Praty) Sharma | praty@stanford.edu | <img src="https://i.imgur.com/qpkakAD.jpg" alt="Praty Sharma" width="157.5" height="157.5">
 John Kamalu | jkamalu@stanford.edu | TODO
-Sarah Tollman  | stollman@stanford.edu | TODO
+Sarah Tollman  | stollman@stanford.edu | <img src="https://imgur.com/a/xEaFd" alt="Sarah Tollman" width="157.5" height="164.4">
 Alan Flores-Lopez | alanf94@stanford.edu | <img src="https://i.imgur.com/y6WLV1M.jpg" alt="Alan Flores-Lopez" width="157.5" height="210">
 
 [Insert photos]
@@ -22,7 +22,7 @@ Member | Hat | Technical Skills | Non-Technical Skills | Personal Traits | Desir
 Karan | tbd | tbd | tbd | tbd | tbd | tbd 
 Praty | White | Deep learning, Systems, Python, some cybersecurity | Team facilitator, leadership skills | Logical, flexible, optimistic | Project management and presentation skills | UI/UX, time management
 John | Black/Yellow | Python, AI/ML, quick prototyping | small-team work, international work environments | Planner, group-oriented, cautious | UI/UX research and design, security, AI/ML lifecycle | Presentation, prioritization, systems
-Sarah | Blue | Systems, Testing | Decision making, some project management | Motivated, logical, direct | Embedded systems & cybersecurity / launching attacks | AI 
+Sarah | Blue | Systems, networking, testing | Decision making, some project management, time management | Motivated, logical, direct | Embedded systems & cybersecurity / launching attacks | AI, can be too blunt
 Alan | Black | Python, systems design, systems security, some AI/deep learning | Facilitating groups, managing schedules and tasks | Precise, consistent, reliable, introverted, thinks of the larger picture | IoT security, applying deep learning, group dynamics, managing a budget | Can be fickle, sometimes hard to convince, introverted
 
 
