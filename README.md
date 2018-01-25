@@ -8,7 +8,7 @@
 Member | Email | Photo
 --- | --- | ---
 Karan Singhal | ksinghal@stanford.edu | TODO
-Pratyaksh (Praty) Sharma | praty@stanford.edu | <img src="https://i.imgur.com/qpkakAD.jpg" alt="Praty Sharma" width="105.3" height="157.5">
+Pratyaksh (Praty) Sharma | praty@stanford.edu | <img src="https://i.imgur.com/qpkakAD.jpg" alt="Praty Sharma" width="157.5" height="157.5">
 John Kamalu | jkamalu@stanford.edu | TODO
 Sarah Tollman  | stollman@stanford.edu | TODO
 Alan Flores-Lopez | alanf94@stanford.edu | TODO
