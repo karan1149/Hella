@@ -27,7 +27,7 @@ Alan | Black | Python, systems design, systems security, some AI/deep learning |
 
 
 # Team Communication:
-1. Email us at [TODO]
+1. Email us at [emails@cs210hella.mailclark.ai](emails@cs210hella.mailclark.ai)
 
 2. Slack: [cs210hella.slack.com](https://cs210hella.slack.com) (sign up [here](https://cs210hella.slack.com/signup)).
 
