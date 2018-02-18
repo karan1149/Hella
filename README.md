@@ -6,6 +6,8 @@ SeeR is leveraging the power of deep learning to maximize the security of cloud-
 
 [Team Song](https://www.youtube.com/embed/a01QQZyl-_I)
 
+[Code Repository](https://github.com/alanefl/seer)
+
 # Team Members
 Member | Email | Photo
 --- | --- | ---
