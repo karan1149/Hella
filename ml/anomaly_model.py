@@ -1,4 +1,5 @@
 import sklearn
+import sklearn.ensemble
 from sklearn.externals import joblib
 import sklearn.metrics as metrics
 import numpy as np
