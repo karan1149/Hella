@@ -18,12 +18,12 @@ def featurize_packets(packets):
   for ts, buf in packets:
     eth = dpkt.ethernet.Ethernet(buf)
 
-    packets = [ts]
+    packet = [ts]
 
     try:
       ip = eth.data
       for key in IP_FEATURES:
-        packets.append(ip[key])
+        packet.append(ip[key])
     except:
       print("Exception in IP parse")
       continue
@@ -31,12 +31,12 @@ def featurize_packets(packets):
     try:
       tcp = ip.data      
       for key in TCP_FEATURES:
-        packets.append(tcp[key])
+        packet.append(tcp[key])
     except:
       print("Exception in TCP parse")
       continue
 
-    yield packets
+    yield packet
 
 if __name__ == "__main__":
   packets = read_tcpdump_file("outside.tcpdump")
