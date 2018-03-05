@@ -1,6 +1,6 @@
-import sklearn.ensemble.IsolationForest as IF
+import sklearn
 from sklearn.externals import joblib
-import sklearn.metrics
+import sklearn.metrics as metrics
 import numpy as np
 DEBUG = True
 
@@ -8,7 +8,7 @@ class AnomalyModel(object):
   def __init__(self):
     """
     """
-    self.model = IF()
+    self.model = sklearn.ensemble.IsolationForest()
 
   def predict(self, packet):
     """
