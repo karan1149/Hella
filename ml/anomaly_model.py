@@ -1,5 +1,6 @@
-import sklearn.ensemble.IsolationForest
+import sklearn
 from sklearn.externals import joblib
+import sklearn.metrics as metrics
 import numpy as np
 DEBUG = True
 
@@ -7,7 +8,7 @@ class AnomalyModel(object):
   def __init__(self):
     """
     """
-    self.model = IsolationForest()
+    self.model = sklearn.ensemble.IsolationForest()
 
   def predict(self, packet):
     """
@@ -42,16 +43,16 @@ class AnomalyModel(object):
     - precision
     - recall
     - f1 score
-    - false negative rate
-    - false positive rate
+    - confusion matrix
     """
     predictions = self.model.predict(packets)
-    labels = np.array(labels)
-    assert(predictions.shape == labels.shape)
     
-    accuracy = np.mean(labels == predictions)
-    
-    
+    accuracy = metrics.accuracy_score(labels, predictions)
+    recall = metrics.recall_score(labels, predictions, pos_label=-1)
+    precision = metrics.precision_score(labels, predictions, pos_label=-1)
+    f1 = 2 * recall * precision / float(recall + precision)
+    confusion = metrics.confusion_matrix(labels, predictions, labels=[1, -1])
+    return accuracy, recall, precision, f1, confusion
 
   def save(self, path):
     """
