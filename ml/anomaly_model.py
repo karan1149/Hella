@@ -53,7 +53,6 @@ class AnomalyModel(object):
     f1 = 2 * recall * precision / float(recall + precision)
     confusion = metrics.confusion_matrix(labels, predictions, labels=[1, -1])
     return accuracy, recall, precision, f1, confusion
-        
 
   def save(self, path):
     """
