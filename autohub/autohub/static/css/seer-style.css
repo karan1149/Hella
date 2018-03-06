@@ -1,0 +1,108 @@
+/*
+ * SeeR-Specific sheets
+ */
+
+input {
+  width: 100%;
+  border-radius: 3px;
+}
+
+body {
+  text-align: center; 
+  justify-content: center;
+  color: #1d4e54;
+}
+
+
+/* SeeR-specific class styling below */
+
+.autohub-large {
+  font-size: 64px;
+  line-height: 200%;
+}
+
+.autohub-txt {
+  font-size: 30px;
+}
+
+.autohub-content {
+  width: 100%;
+}
+
+/* SeeR-specific id styling below */
+
+#autohub-landing {
+  background-image: url("https://images.pexels.com/photos/63324/california-road-highway-mountains-63324.jpeg");
+
+ /* Full height */
+  height: 100vh;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#autohub-header {
+  height: 60px;
+  background-color: black;
+  color: #4b7a80;
+}
+
+#autohub-footer {
+  height: 60px;
+  background-color: black;
+  color: #4b7a80;
+  font-size: 35px;
+}
+
+#seer-top-logo {
+  height: 60px;
+}
+
+#seer-icon {
+  color: #4b7a80;
+}
+
+/* FONT */
+
+h1 {
+  font-family: Josefin Sans;
+  font-size: 24px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 500;
+  line-height: 26.4px;
+}
+h3 {
+  font-family: Josefin Sans;
+  font-size: 14px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 500;
+  line-height: 15.4px;
+}
+p {
+  font-family: Josefin Sans;
+  font-size: 14px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+blockquote {
+  font-family: Josefin Sans;
+  font-size: 21px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
+  line-height: 30px;
+}
+pre {
+  font-family: Josefin Sans;
+  font-size: 13px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
+  line-height: 18.5667px;
+}
