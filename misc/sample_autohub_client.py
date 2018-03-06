@@ -3,7 +3,7 @@ import json
 import os
 
 API_BASE = "http://seer-autohub.herokuapp.com/api/v1/"
-API_KEY = "0279615b-5cb4-4070-abd9-4b9909aca6af" # I'm on the OneNote -> Documentation -> Design -> seer-car-hub
+API_KEY = "fill-me" # I'm on the OneNote -> Documentation -> Design -> seer-car-hub
 
 
 def get_update_info():
