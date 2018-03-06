@@ -23,7 +23,7 @@ def latest_update():
   try:
     return send_file(path, as_attachment=True, attachment_filename='latest.tar')
   except Exception as e:
-    return str(e)
+    return abort(500)
 
 @api.route("/car/updates/list")
 @require_apikey
@@ -36,15 +36,15 @@ def list_updates():
 def get_update():
   update_id = request.args.get('id')
   if not update_id:
-    return render_template('404.html')
+    return abort(404)
 
   update_path = data_store.get_update_path(api.root_path, update_id)
 
   if not update_path:
-    return "Update not found."
+    return abort(404)
 
   try:
     return send_file(update_path, as_attachment=True, attachment_filename='%s.tar' % update_id)
   except Exception as e:
-    return "Update not found."
+    return abort(404)
 
