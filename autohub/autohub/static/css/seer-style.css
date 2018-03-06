@@ -23,10 +23,11 @@ body {
 
 .autohub-txt {
   font-size: 30px;
+  line-height: 100%;
 }
 
 .autohub-content {
-  width: 100%;
+  width: 40%;
 }
 
 /* SeeR-specific id styling below */
