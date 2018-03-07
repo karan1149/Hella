@@ -25,7 +25,6 @@ def featurize_packets(packets):
       for key in IP_FEATURES:
         packet.append(ip[key])
     except:
-      print("Exception in IP parse")
       continue
 
     try:
@@ -33,7 +32,6 @@ def featurize_packets(packets):
       for key in TCP_FEATURES:
         packet.append(tcp[key])
     except:
-      print("Exception in TCP parse")
       continue
 
     yield packet
