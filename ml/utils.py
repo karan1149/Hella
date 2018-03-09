@@ -1,3 +1,4 @@
+from scapy.all import *
 import dpkt
 
 IP_FEATURES = ['len', 'id', 'off', 'ttl', 'p', 'sum']
@@ -12,11 +13,26 @@ def read_tcpdump_file(tcpdump_file):
     for ts, buf in pcap:
       yield ts, buf
 
+def featurize_scapy_pkt(pkt):
+  """
+  Converts a scapy packet into a list of features.
+  """
+  features = [pkt.time]
+  if IP in pkt:
+    features.extend([pkt[IP].len, pkt[IP].id, pkt[IP].frag, \
+      pkt[IP].ttl, pkt[IP].proto, pkt[IP].chksum])
+  if TCP in pkt:
+    features.extend([pkt[TCP].sport, pkt[TCP].dport, pkt[TCP].seq, \
+      pkt[TCP].ack, pkt[TCP].flags, pkt[TCP].window, pkt[TCP].chksum])
+  return features
+
 def featurize_packets(packets):
   """
   """
   for ts, buf in packets:
     eth = dpkt.ethernet.Ethernet(buf)
+    # Note: if you want to convert packets to scapy packets,
+    # you can do pkt = Ether(buf)
 
     packet = [ts]
 
@@ -29,7 +45,7 @@ def featurize_packets(packets):
       continue
 
     try:
-      tcp = ip.data      
+      tcp = ip.data
       for key in TCP_FEATURES:
         packet.append(tcp[key])
     except:
