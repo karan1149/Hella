@@ -15,7 +15,7 @@ to_rate = lambda num, denom: 'None' if not denom else '{}%'.format(round((num/fl
 
 DUMMY_DATA_POINTS = [
     Data_point(Ether(dst='88:88:88:88:88:88', src='66:66:66:66:66:66') / \
-        IP(dst='1.1.1.1', src='2.2.2.2') / TCP(), malicious=True)
+        IP(dst='1.1.1.1', src='2.2.2.2', len=5, id=1, chksum=5) / TCP(chksum=5), malicious=True)
 ]
 DUMMY_TEST_DATA = Test_data(DUMMY_DATA_POINTS)
 
