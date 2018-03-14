@@ -14,9 +14,10 @@ class AnomalyModel(object):
   def predict(self, packet):
     """
     Predicts whether the given packet is anomalous.
-    Dimensionality of packet is (n_features), +1 if inlier, -1 if anomaly
+    Dimensionality of packet is (n_features), 0 if inlier, 1 if anomaly
     """
-    return self.model.predict([packet])[0]
+    pred = self.model.predict([packet])[0]
+    return 1 if pred == -1 else 0
 
 
   def predicts(self, packets):
@@ -24,9 +25,9 @@ class AnomalyModel(object):
     Predicts whether multiple packets are anomalous.
     Dimensionality of packets is (n_samples, n_features).
     Returns predictions with dims (n_samples)
-    +1 if inlier, -1 if anomaly
+    0 if inlier, 1 if anomaly
     """
-    return self.model.predict(packets)
+    return [predict(pkt) for pkt in packets]
 
 
   def fit(self, packets):
@@ -49,10 +50,10 @@ class AnomalyModel(object):
     predictions = self.model.predict(packets)
     
     accuracy = metrics.accuracy_score(labels, predictions)
-    recall = metrics.recall_score(labels, predictions, pos_label=-1)
-    precision = metrics.precision_score(labels, predictions, pos_label=-1)
+    recall = metrics.recall_score(labels, predictions)
+    precision = metrics.precision_score(labels, predictions)
     f1 = 2 * recall * precision / float(recall + precision)
-    confusion = metrics.confusion_matrix(labels, predictions, labels=[1, -1])
+    confusion = metrics.confusion_matrix(labels, predictions)
     return accuracy, recall, precision, f1, confusion
 
   def save(self, path):

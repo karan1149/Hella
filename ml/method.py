@@ -22,7 +22,7 @@ class Method():
             reader = read_tcpdump_file('data/outside.tcpdump')
             packets = [f for f in featurize_packets(reader)]
             self.model.fit(packets)
-            model.save('model.pkl')
+            self.model.save('model.pkl')
 
     def handle_pkt(self, pkt):
         featurized_pkt = featurize_scapy_pkt(pkt)
