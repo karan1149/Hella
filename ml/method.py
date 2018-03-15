@@ -19,13 +19,27 @@ class Method():
         try:
             self.model.load('model.pkl')
         except:
-            reader = read_tcpdump_file('data/outside.tcpdump')
-            packets = [f for f in featurize_packets(reader)]
+            packets = []
+
+            reader = read_tcpdump_file('data/week1_monday.tcpdump')
+            packets.extend(featurize_packets(reader))
+
+            reader = read_tcpdump_file('data/week1_tuesday.tcpdump')
+            packets.extend(featurize_packets(reader))
+
+            reader = read_tcpdump_file('data/week1_wednesday.tcpdump')
+            packets.extend(featurize_packets(reader))
+
+            reader = read_tcpdump_file('data/week1_friday.tcpdump')
+            packets.extend(featurize_packets(reader))
+
+            print("Fitting on %d packets" % len(packets))
+
             self.model.fit(packets)
-            model.save('model.pkl')
+            self.model.save('model.pkl')
 
     def handle_pkt(self, pkt):
-        featurized_pkt = featurize_scapy_pkt(pkt)
+        featurized_pkt = featurize_dpkt_pkt(pkt)
         prediction = self.model.predict(featurized_pkt)
         ether = Ether(dst=ETH_BROADCAST, src=ETH_SRC)
         seer = Seer(malicious=prediction, data=pkt)

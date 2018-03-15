@@ -8,19 +8,14 @@ from test_data import Data_point, Test_data
 LOG_LEVEL_MINIMAL = 0
 LOG_LEVEL_VERBOSE = 1
 
-LOG_LEVEL_DEFAULT = LOG_LEVEL_VERBOSE
+LOG_LEVEL_DEFAULT = LOG_LEVEL_MINIMAL
 
 to_pred = lambda prediction: 'MALICIOUS' if prediction else 'BENIGN'
 to_rate = lambda num, denom: 'None' if not denom else '{}%'.format(round((num/float(denom)) * 100, 2))
 
-DUMMY_DATA_POINTS = [
-    Data_point(Ether(dst='88:88:88:88:88:88', src='66:66:66:66:66:66') / \
-        IP(dst='1.1.1.1', src='2.2.2.2', len=5, id=1, chksum=5) / TCP(chksum=5), malicious=True)
-]
-DUMMY_TEST_DATA = Test_data(DUMMY_DATA_POINTS)
 
 class Monitor():
-    def __init__(self, test_data=DUMMY_TEST_DATA, log_level=LOG_LEVEL_DEFAULT, send_fn=sendp):
+    def __init__(self, test_data, log_level=LOG_LEVEL_DEFAULT, send_fn=sendp):
         self.test_data = test_data
         self.log_level = log_level
         self.send_fn = send_fn
