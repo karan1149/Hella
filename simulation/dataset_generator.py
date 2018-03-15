@@ -2,16 +2,16 @@ from test_data import Data_point, Test_data
 from utils import *
 from scapy.all import *
 
-def generate_test_data(source="darpa", max_packets=200):
+def generate_test_data(source='darpa', max_packets=200):
 	if source == "darpa":
 		dps = []
 
 		reader = read_tcpdump_file('data/week2_thursday.tcpdump')
-		filtered_pkts = [f for f in filter_pkts(reader, max_packets=max_packets)]
+		filtered_pkts = filter_pkts(reader, max_packets=max_packets)
 		dps.extend([Data_point(pkt, malicious=True) for pkt in filtered_pkts])
 
 		reader = read_tcpdump_file('data/week1_thursday.tcpdump')
-		filtered_pkts = [f for f in filter_pkts(reader, max_packets=max_packets)]
+		filtered_pkts = filter_pkts(reader, max_packets=max_packets)
 		dps.extend([Data_point(pkt, malicious=False) for pkt in filtered_pkts])
 
 		return Test_data(dps)
