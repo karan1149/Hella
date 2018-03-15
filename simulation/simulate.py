@@ -5,10 +5,13 @@ sys.path.append(os.path.expandvars('../ml'))
 sys.path.append(os.path.expandvars('../monitor'))
 from monitor import Monitor
 from method import Method
+from generate import generate_test_data
 
 class Simulator():
     def __init__(self):
-        self.monitor = Monitor(send_fn=self.send_to_method)
+        print("Gathering test data...")
+        test_data = generate_test_data('darpa')
+        self.monitor = Monitor(test_data, send_fn=self.send_to_method)
         self.method = Method(send_fn=self.send_to_monitor)
 
     def send_to_method(self, pkt):
