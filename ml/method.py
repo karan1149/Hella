@@ -30,6 +30,9 @@ class Method():
             reader = read_tcpdump_file('data/week1_wednesday.tcpdump')
             packets.extend([f for f in featurize_packets(reader)])
 
+            reader = read_tcpdump_file('data/week1_friday.tcpdump')
+            packets.extend([f for f in featurize_packets(reader)])
+
             print("Fitting on %d packets" % len(packets))
 
             self.model.fit(packets)
