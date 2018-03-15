@@ -27,7 +27,7 @@ class AnomalyModel(object):
     Returns predictions with dims (n_samples)
     0 if inlier, 1 if anomaly
     """
-    return [predict(pkt) for pkt in packets]
+    return [self.predict(pkt) for pkt in packets]
 
 
   def fit(self, packets):
