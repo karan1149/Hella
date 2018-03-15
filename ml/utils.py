@@ -29,6 +29,7 @@ def featurize_scapy_pkt(pkt):
 def featurize_packets(packets):
   """
   """
+  results = []
   for ts, buf in packets:
     eth = dpkt.ethernet.Ethernet(buf)
     # Note: if you want to convert packets to scapy packets,
@@ -49,8 +50,36 @@ def featurize_packets(packets):
         packet.append(tcp[key])
     except:
       continue
+    results.append(packet)
+    
+  return results
 
-    yield packet
+def filter_pkts(pkts, max_packets=None):
+  i = 0
+  for ts, buf in pkts:
+    if i == max_packets:
+      return
+    eth = dpkt.ethernet.Ethernet(buf)
+    packet = [ts]
+
+    try:
+      ip = eth.data
+      for key in IP_FEATURES:
+        packet.append(ip[key])
+    except:
+      continue
+
+    try:
+      tcp = ip.data
+      for key in TCP_FEATURES:
+        packet.append(tcp[key])
+    except:
+      continue
+    i += 1
+    yield (ts, buf)
+
+def featurize_dpkt_pkt(pkt):
+  return featurize_packets([pkt])[0]
 
 if __name__ == "__main__":
   packets = read_tcpdump_file("outside.tcpdump")
