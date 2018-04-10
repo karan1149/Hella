@@ -1,5 +1,6 @@
 import sklearn
 import sklearn.ensemble
+from sklearn.svm import OneClassSVM
 from sklearn.externals import joblib
 import sklearn.metrics as metrics
 import numpy as np
@@ -9,7 +10,7 @@ class AnomalyModel(object):
   def __init__(self):
     """
     """
-    self.model = sklearn.ensemble.IsolationForest()
+    self.model = OneClassSVM()
 
   def predict(self, packet):
     """
