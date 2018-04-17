@@ -11,6 +11,7 @@ class AnomalyModel(object):
     """
     """
     self.model = IsolationForest()
+    self.featurizer = None
 
   def predict(self, packet):
     """
@@ -38,7 +39,7 @@ class AnomalyModel(object):
     """
     self.model.fit(packets)
 
-  def validation(self, packets, labels):
+  def validation(self, predictions, labels):
     """
     Takes a list of packets and a list of labels and computes validation scores
     for the trained model.
@@ -48,8 +49,6 @@ class AnomalyModel(object):
     - f1 score
     - confusion matrix
     """
-    predictions = self.model.predict(packets)
-    
     accuracy = metrics.accuracy_score(labels, predictions)
     recall = metrics.recall_score(labels, predictions)
     precision = metrics.precision_score(labels, predictions)
@@ -61,10 +60,12 @@ class AnomalyModel(object):
     """
     Dumps the model to the given path.
     """
-    joblib.dump(self.model, path)
+    joblib.dump({'model': self.model, 'featurizer': self.featurizer}, path)
 
   def load(self, path):
     """
     Loads a model dump from path and initializes class members.
     """
-    self.model = joblib.load(path)
+    save_dict = joblib.load(path)
+    self.model = save_dict['model']
+    self.featurizer = save_dict['featurizer']
