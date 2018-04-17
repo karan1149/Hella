@@ -28,29 +28,6 @@ def featurize_scapy_pkt(pkt):
       pkt[TCP].ack, pkt[TCP].flags, pkt[TCP].window, pkt[TCP].chksum])
   return features
 
-def featurize_packets(packets):
-  """
-  """
-  results = []
-  for ts, buf in packets:
-    eth = dpkt.ethernet.Ethernet(buf)
-    # Note: if you want to convert packets to scapy packets,
-    # you can do pkt = Ether(buf)
-
-    packet = [ts]
-
-    ip = eth.data
-    for key in IP_FEATURES:
-      # print('ip', key, ip[key])
-      packet.append(ip[key])
-
-    tcp = ip.data
-    for key in TCP_FEATURES:
-      packet.append(tcp[key])
-    results.append(packet)
-    
-  return results
-
 def filter_pkts(pkts, max_packets=None):
   i = 0
   for ts, buf in pkts:
@@ -76,6 +53,28 @@ def filter_pkts(pkts, max_packets=None):
     yield (ts, buf)
 
 def featurize_dpkt_pkt(pkt, packet_queue):
+  def featurize_packets(packets):
+    """
+    """
+    results = []
+    for ts, buf in packets:
+      eth = dpkt.ethernet.Ethernet(buf)
+      # Note: if you want to convert packets to scapy packets,
+      # you can do pkt = Ether(buf)
+
+      packet = [ts]
+
+      ip = eth.data
+      for key in IP_FEATURES:
+        # print('ip', key, ip[key])
+        packet.append(ip[key])
+
+      tcp = ip.data
+      for key in TCP_FEATURES:
+        packet.append(tcp[key])
+      results.append(packet)
+      
+    return results
   # First get individual features
   features = featurize_packets([pkt])[0]
   n_features = len(features)
