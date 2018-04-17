@@ -17,15 +17,16 @@ app = Flask(__name__)
 def index():
 
 	# Take all files in the appropriate directories matching ".pkl"
-	dataset_names = [make_name_pretty(name) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
-	model_names = [make_name_pretty(name) for name in os.listdir(model_dir) if name.endswith('.pkl')]
+	dataset_names = [(make_name_pretty(name), name) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
+	model_names = [(make_name_pretty(name), name) for name in os.listdir(model_dir) if name.endswith('.pkl')]
 	return render_template('index.html', dataset_names=dataset_names, model_names=model_names)
 
 @app.route('/predict', methods=['POST'])
 def predict():
 	params = request.get_json(silent=True, force=True)
-	model_path = model_dir + "isolation_forest_contextual.pkl"
-	dataset_path = dataset_dir + "darpa_1000.pkl"
+	print(params)
+	model_path = model_dir + params['model']
+	dataset_path = dataset_dir + params['dataset']
 
 	model = AnomalyModel()
 	model.load(model_path)
@@ -51,11 +52,6 @@ def make_name_pretty(name):
 	name = name[:-4]
 	name = name.replace("_", " ")
 	name = name.title()
-	return name
-
-# Reverse the above process for a single name
-def make_name_ugly(name):
-	name = name.replace(" ", "_").tolower() + ".pkl"
 	return name
 
 if __name__ == '__main__':
