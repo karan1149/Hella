@@ -7,6 +7,7 @@ from monitor import Monitor
 from method import Method
 from dataset_generator import generate_test_data
 import argparse
+import pickle
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--verbosity') # 0 or 1
@@ -18,6 +19,8 @@ class Simulator():
     def __init__(self):
         print('Gathering test data...')
         test_data = generate_test_data('darpa')
+        with open('darpa_1000.pkl', 'w') as f:
+            pickle.dump(test_data, f)
         self.monitor = Monitor(test_data, send_fn=self.send_to_method, log_level=int(args.verbosity))
         self.method = Method(send_fn=self.send_to_monitor)
 
