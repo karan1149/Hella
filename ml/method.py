@@ -20,14 +20,28 @@ class Method():
         self.packet_queue = deque()
 
     def load_model(self):
+
+        def featurizer(packets):
+            featurized_pkts = []
+            queue = deque()
+            for packet in packets:
+                featurized_pkt = featurize_dpkt_pkt(packet, queue)
+                queue.append(featurized_pkt)
+                # Max len is WINDOW_SIZE - 1
+                if len(queue) > WINDOW_SIZE:
+                    queue.popleft()
+                featurized_pkts.append(featurized_pkt)
+            return featurized_pkts
+    
         try:
             self.model.load('model.pkl')
         except:
-            with open('features.pkl', 'w') as f:
+            with open('features.pkl', 'r+') as f:
                 try: 
                     featurized_pkts = pickle.load(f)
+                    print("Loaded feauturized packets...")
                 except Exception as e:
-                    print(e)
+                    print("Unable to load previous packets: " + e)
                     packets = []
 
                     reader = read_tcpdump_file('data/week1_monday.tcpdump')
@@ -42,20 +56,14 @@ class Method():
                     reader = read_tcpdump_file('data/week1_friday.tcpdump')
                     packets.extend(filter_pkts(reader))
 
-                    featurized_pkts = []
-                    queue = deque()
-                    for packet in packets:
-                        featurized_pkt = featurize_dpkt_pkt(packet, queue)
-                        queue.append(featurized_pkt)
-                        # Max len is WINDOW_SIZE - 1
-                        if len(queue) > WINDOW_SIZE:
-                            queue.popleft()
-                        featurized_pkts.append(featurized_pkt)
+                    featurized_pkts = featurizer(packets)
                     pickle.dump(featurized_pkts, f)
                     print("Saved packets to file features.pkl")
 
                 print("Fitting on %d packets" % len(featurized_pkts))
                 print("Packet dim is %d" % len(featurized_pkts[0]))
+
+                self.model.featurizer = featurizer
 
                 self.model.fit(featurized_pkts)
                 self.model.save('model.pkl')
