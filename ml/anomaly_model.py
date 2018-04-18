@@ -53,7 +53,7 @@ class AnomalyModel(object):
     recall = metrics.recall_score(labels, predictions)
     precision = metrics.precision_score(labels, predictions)
     f1 = 2 * recall * precision / float(recall + precision)
-    confusion = metrics.confusion_matrix(labels, predictions)
+    confusion = metrics.confusion_matrix(labels, predictions).tolist()
     return accuracy, recall, precision, f1, confusion
 
   def save(self, path):
