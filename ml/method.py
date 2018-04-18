@@ -1,16 +1,15 @@
 from scapy.all import *
-
 from headers import Seer
 from anomaly_model import AnomalyModel
 from utils import *
-from collections import deque
+
 import pickle
 
 ETH_BROADCAST = 'ff:ff:ff:ff:ff:ff'
-WINDOW_SIZE = 20
 
 # TODO: update with actual ethernet address of ECU
 ETH_SRC = ETH_BROADCAST
+WINDOW_SIZE = 20
 
 class Method():
     def __init__(self, send_fn=sendp):
@@ -20,28 +19,16 @@ class Method():
         self.packet_queue = deque()
 
     def load_model(self):
-
-        def featurizer(packets):
-            featurized_pkts = []
-            queue = deque()
-            for packet in packets:
-                featurized_pkt = featurize_dpkt_pkt(packet, queue)
-                queue.append(featurized_pkt)
-                # Max len is WINDOW_SIZE - 1
-                if len(queue) > WINDOW_SIZE:
-                    queue.popleft()
-                featurized_pkts.append(featurized_pkt)
-            return featurized_pkts
-    
         try:
             self.model.load('model.pkl')
         except:
-            with open('features.pkl', 'r+') as f:
+            with open('features.pkl', 'a+') as f:
                 try: 
                     featurized_pkts = pickle.load(f)
                     print("Loaded feauturized packets...")
                 except Exception as e:
-                    print("Unable to load previous packets: " + e)
+                    print("Unable to load previous packets: ")
+                    print(type(e))
                     packets = []
 
                     reader = read_tcpdump_file('data/week1_monday.tcpdump')
@@ -57,8 +44,8 @@ class Method():
                     packets.extend(filter_pkts(reader))
 
                     featurized_pkts = featurizer(packets)
-                    pickle.dump(featurized_pkts, f)
-                    print("Saved packets to file features.pkl")
+                    # pickle.dump(featurized_pkts, f)
+                    # print("Saved packets to file features.pkl")
 
                 print("Fitting on %d packets" % len(featurized_pkts))
                 print("Packet dim is %d" % len(featurized_pkts[0]))
