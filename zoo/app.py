@@ -15,7 +15,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-
 	# Take all files in the appropriate directories matching ".pkl"
 	dataset_names = [(make_name_pretty(name), name) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
 	model_names = [(make_name_pretty(name), name) for name in os.listdir(model_dir) if name.endswith('.pkl')]
