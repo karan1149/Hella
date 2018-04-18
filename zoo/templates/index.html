@@ -16,8 +16,8 @@ function sendRequest(){
 	message.innerText = "Running packet simulation..."
 	http.onreadystatechange = function() {//Call a function when the state changes.
 	    if(http.readyState == 4 && http.status == 200) {
-	    	console.log(http.response);
-	    	message.innerText = "";
+	    	response = JSON.parse(http.response)
+	    	message.innerHTML = "Accuracy was " + response[0] + ", recall was " + response[1] + ",  precision was " + response[2] + ".";
 	        alert("Simulation complete!")
 	    }
 	}
@@ -33,6 +33,7 @@ function sendRequest(){
 	button:hover {background: white; color: black;}
 	.small {font-size:16px;}
 	p {margin-bottom: 20px;}
+	#message {font-size: 20px;}
 </style>
 
 </head>
