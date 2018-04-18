@@ -2,7 +2,7 @@ from test_data import Data_point, Test_data
 from utils import *
 from scapy.all import *
 
-def generate_test_data(source='darpa', max_packets=500):
+def generate_test_data(source='darpa', max_packets=200):
 	if source == "darpa":
 		dps = []
 

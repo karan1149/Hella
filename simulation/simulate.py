@@ -19,7 +19,7 @@ class Simulator():
     def __init__(self):
         print('Gathering test data...')
         test_data = generate_test_data('darpa')
-        with open('darpa_1000.pkl', 'w') as f:
+        with open('darpa_400.pkl', 'w') as f:
             pickle.dump(test_data, f)
         self.monitor = Monitor(test_data, send_fn=self.send_to_method, log_level=int(args.verbosity))
         self.method = Method(send_fn=self.send_to_monitor)
