@@ -1,6 +1,50 @@
 <html>
 <head>
+<script type="text/javascript" src="/static/Chart.bundle.min.js"></script>
 <script>
+
+
+function makeChart(accuracy, recall, precision){
+	container = document.getElementById("chart-container");
+	container.style.display = "block";
+
+	var ctx = document.getElementById("myChart");
+	var myChart = new Chart(ctx, {
+	    type: 'horizontalBar',
+	    data: {
+	        labels: ["Accuracy", "Recall", "Precision"],
+	        datasets: [{
+	        	label: "Fraction of test examples",
+	            data: [accuracy, recall, precision],
+	            backgroundColor: [
+	                'rgba(255, 99, 132, 0.2)',
+	                'rgba(54, 162, 235, 0.2)',
+	                'rgba(255, 206, 86, 0.2)',
+	            ],
+	            borderColor: [
+	                'rgba(255,99,132,1)',
+	                'rgba(54, 162, 235, 1)',
+	                'rgba(255, 206, 86, 1)',
+	            ],
+	            borderWidth: 1
+	        }]
+	    },
+	    options: {
+	    	legend: {display: false},
+	    	barThickness: 20,
+	        scales: {
+	            xAxes: [{
+	                ticks: {
+	                    beginAtZero:true
+	                }
+	            }]
+	        }
+	    }
+	});
+}
+
+
+
 function sendRequest(){
 	model = document.getElementById("model").value
 	dataset = document.getElementById("dataset").value
@@ -12,13 +56,15 @@ function sendRequest(){
 
 	//Send the proper header information along with the request
 	http.setRequestHeader("Content-type", "application/json");
-	message = document.getElementById("message")
-	message.innerText = "Running packet simulation..."
+	message = document.getElementById("message");
+	message.innerText = "Running packet simulation...";
+	container = document.getElementById("chart-container");
+	container.style.display = "none";
 	http.onreadystatechange = function() {//Call a function when the state changes.
 	    if(http.readyState == 4 && http.status == 200) {
 	    	response = JSON.parse(http.response)
-	    	message.innerHTML = "Accuracy was " + response[0] + ", recall was " + response[1] + ",  precision was " + response[2] + ".";
-	        alert("Simulation complete!")
+	    	message.innerHTML = "Simulation complete!";
+	        makeChart(response[0], response[1], response[2]);
 	    }
 	}
 	http.send(params);
@@ -34,6 +80,9 @@ function sendRequest(){
 	.small {font-size:16px;}
 	p {margin-bottom: 20px;}
 	#message {font-size: 20px;}
+	#myChart {float:center;}
+	#chart-container { width: 50%; margin-left:auto; margin-right:auto; height:200px; display: none; margin-bottom: 20px;}
+	p {margin-top: .5em;}
 </style>
 
 </head>
@@ -62,13 +111,14 @@ function sendRequest(){
 		</select>
 		
 		<br />
-		<a href="#"><button onclick="sendRequest()">Simulate</button></a>
+		<button type='button' onclick="sendRequest()">Simulate</button>
 
 	</form>
 
 
 
 <p><span id="message"></span></p>
+<div id="chart-container"><canvas id="myChart"></canvas></div>
 
 </div>
 
