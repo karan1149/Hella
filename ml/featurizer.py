@@ -11,7 +11,7 @@ class BasicFeaturizer:
 	def __init__(self):
 		pass
 
-	def featurize_basic(self, pkt):
+	def featurize(self, pkt):
 		"""
 		Converts a scapy packet into a list of features.
 		"""
@@ -36,7 +36,7 @@ class TimeBasedFeaturizer():
 		self.ip_feature_stats = { key : defaultdict(int) for ip_feature in IP_FEATURES }
 		self.tcp_feature_stats = { key : defaultdict(int) for tcp_feature in TCP_FEATURES }
 
-	def cull_history(self, now):
+	def _cull_history(self, now):
 
 		while now - self.pkt_history[0][0] > self.window * 1000:
 
@@ -44,9 +44,20 @@ class TimeBasedFeaturizer():
 
 			self.ip_feature_stats[trash_pkt]
 
-	def increment_history(self, pkt):
+	def _increment_history(self, pkt):
 
 		self.pkt_history.append(pkt)
+
+	def _featurize_basic(self, pkt):
+		features = [pkt.time]
+		if IP in pkt:
+		features.extend([pkt[IP].len, pkt[IP].id, pkt[IP].frag, \
+			pkt[IP].ttl, pkt[IP].proto, pkt[IP].chksum])
+		if TCP in pkt:
+		features.extend([pkt[TCP].sport, pkt[TCP].dport, pkt[TCP].seq, \
+			pkt[TCP].ack, pkt[TCP].flags, pkt[TCP].window, pkt[TCP].chksum])
+		return features
+
 
 	def featurize(self, pkt):
 		pass
