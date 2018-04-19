@@ -3,6 +3,7 @@
 from scapy.all import *
 from test_data import Data_point, Test_data
 
+GET_BASE = 'GET {} HTTP/1.1\r\nHost: seer-autohub.herokuapp.com\r\nAccept-Encoding: gzip, deflate\r\nAccept: */*\r\nConnection: keep-alive\r\n\r\n'
 API_DST = 'seer-autohub.herokuapp.com'
 API_BASE = '/api/v1/'
 API_KEY = '0279615b-5cb4-4070-abd9-4b9909aca6af'
@@ -15,7 +16,6 @@ GET_UPDATE = GET_UPDATE_FUNC(UPDATE_ID)
 FIN = 0x01
 SCAPY_PORT = 9999
 HTTP_PORT = 80
-STARTING_SEQNO = 42
 
 DATASET_EXT = '.pcap'
 
@@ -32,13 +32,18 @@ class API():
     def __init__(self):
         self.recv_pkts = []
 
+    def drain_pkts(self):
+        pkts = self.recv_pkts
+        self.recv_pkts = []
+        return pkts
+
     def perform_get(self, query):
         print('Performing GET...')
 
-        get = 'GET {} HTTP/1.1\r\nHost: seer-autohub.herokuapp.com\r\nAccept-Encoding: gzip, deflate\r\nAccept: */*\r\nConnection: keep-alive\r\n\r\n'.format(query)
+        get = GET_BASE.format(query)
 
         # Send syn and receive synack
-        syn_pkt = IP(dst=API_DST) / TCP(sport=SCAPY_PORT, dport=80, flags='S', seq=STARTING_SEQNO)
+        syn_pkt = IP(dst=API_DST) / TCP(sport=SCAPY_PORT, dport=80, flags='S')
         synack_pkt = sr1(syn_pkt, timeout=2)
         if not synack_pkt: return
         self.recv_pkts.append(synack_pkt)
@@ -69,8 +74,9 @@ def generate_test_data(dataset_filename):
     api.perform_get(GET_UPDATE_INFO)
     api.perform_get(GET_LATEST_UPDATE)
     api.perform_get(GET_UPDATE)
+    pkts = api.drain_pkts()
     if (dataset_filename):
         if not dataset_filename.endswith(DATASET_EXT):
             dataset_filename = ''.join([dataset_filename, DATASET_EXT])
-        wrpcap(dataset_filename, api.recv_pkts)
-    return Test_data([Data_point(p, malicious=False) for p in api.recv_pkts])
+        wrpcap(dataset_filename, pkts)
+    return Test_data([Data_point(p, malicious=False) for p in pkts])
