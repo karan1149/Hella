@@ -39,7 +39,9 @@ class Method():
             self.model.save('model.pkl')
 
     def handle_pkt(self, pkt):
-        featurized_pkt = featurize_dpkt_pkt(pkt)
+        featurize_fn = featurize_scapy_pkt if 'scapy' in str(type(pkt)) \
+            else featurize_dpkt_pkt
+        featurized_pkt = featurize_fn(pkt)
         prediction = self.model.predict(featurized_pkt)
         ether = Ether(dst=ETH_BROADCAST, src=ETH_SRC)
         seer = Seer(malicious=prediction, data=pkt)
