@@ -1,126 +1,43 @@
 <html>
 <head>
-<script type="text/javascript" src="/static/Chart.bundle.min.js"></script>
-<script>
-
-
-function makeChart(accuracy, recall, precision){
-	container = document.getElementById("chart-container");
-	container.style.display = "block";
-
-	var ctx = document.getElementById("myChart");
-	var myChart = new Chart(ctx, {
-	    type: 'horizontalBar',
-	    data: {
-	        labels: ["Accuracy", "Recall", "Precision"],
-	        datasets: [{
-	        	label: "Fraction of test examples",
-	            data: [accuracy, recall, precision],
-	            backgroundColor: [
-	                'rgba(255, 99, 132, 0.2)',
-	                'rgba(54, 162, 235, 0.2)',
-	                'rgba(255, 206, 86, 0.2)',
-	            ],
-	            borderColor: [
-	                'rgba(255,99,132,1)',
-	                'rgba(54, 162, 235, 1)',
-	                'rgba(255, 206, 86, 1)',
-	            ],
-	            borderWidth: 1
-	        }]
-	    },
-	    options: {
-	    	legend: {display: false},
-	    	barThickness: 20,
-	        scales: {
-	            xAxes: [{
-	                ticks: {
-	                    beginAtZero:true
-	                }
-	            }]
-	        }
-	    }
-	});
-}
-
-
-
-function sendRequest(){
-	model = document.getElementById("model").value
-	dataset = document.getElementById("dataset").value
-	var http = new XMLHttpRequest();
-	var url = "/predict";
-	dict = {'model': model, 'dataset': dataset}
-	var params = JSON.stringify(dict);
-	http.open("POST", url, true);
-
-	//Send the proper header information along with the request
-	http.setRequestHeader("Content-type", "application/json");
-	message = document.getElementById("message");
-	message.innerText = "Running packet simulation...";
-	container = document.getElementById("chart-container");
-	container.style.display = "none";
-	http.onreadystatechange = function() {//Call a function when the state changes.
-	    if(http.readyState == 4 && http.status == 200) {
-	    	response = JSON.parse(http.response)
-	    	message.innerHTML = "Simulation complete!";
-	        makeChart(response[0], response[1], response[2]);
-	    }
-	}
-	http.send(params);
-}
-</script>
-
-<style>
-	body {background:black; font-size: 65px; color: white; font-family: 'Helvetica'; padding-top:30px;}
-	span {font-size:30px;}
-	button {float:center; margin-top: 30px; font-size: 35px; background: black; color: white; border: 1px solid white; padding: 8px 15px;}
-	div { text-align: center;  margin-left: auto; margin-right: auto;}
-	button:hover {background: white; color: black;}
-	.small {font-size:16px;}
-	p {margin-bottom: 20px;}
-	#message {font-size: 20px;}
-	#myChart {float:center;}
-	#chart-container { width: 50%; margin-left:auto; margin-right:auto; height:200px; display: none; margin-bottom: 20px;}
-	p {margin-top: .5em;}
-</style>
-
+	<script type="text/javascript" src="/static/Chart.bundle.min.js"></script>
+	<script type="text/javascript" src="/static/app.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
 
-<body><div><p>
-	<img src="/static/seer.png" height="200"/></p><p>
-	<span><b>Choose a Model and a Dataset</b></span></p>
+<body>
+	<div>
+		<p><img src="/static/seer.png" height="200"/></p>
+		<p><span><b>Choose a Model and a Dataset</b></span></p>
 
-	<p><span class="small">The SeeR system will run a live simulation of the model and dataset you choose!<br /></span></p>
+		<p><span class="small">The SeeR system will run a live simulation of the model and dataset you choose!<br /></span></p>
 
-	<form>
+		<form>
 
-		<span class="small">Model: </span>
-		<select id="model">
-			{% for name in model_names %}
-			<option value="{{name[1]}}">{{name[0]}}</option>
-			{% endfor %}
-		</select>
-
-
-		<span class="small">Dataset: </span>
-		<select id="dataset">
-			{% for name in dataset_names %}
-			<option value="{{name[1]}}">{{name[0]}}</option>
-			{% endfor %}
-		</select>
-		
-		<br />
-		<button type='button' onclick="sendRequest()">Simulate</button>
-
-	</form>
+			<span class="small">Model: </span>
+			<select id="model">
+				{% for name in model_names %}
+				<option value="{{name[1]}}">{{name[0]}}</option>
+				{% endfor %}
+			</select>
 
 
+			<span class="small">Dataset: </span>
+			<select id="dataset">
+				{% for name in dataset_names %}
+				<option value="{{name[1]}}">{{name[0]}}</option>
+				{% endfor %}
+			</select>
+			
+			<br />
+			<button type='button' onclick="sendRequest()">Simulate</button>
 
-<p><span id="message"></span></p>
-<div id="chart-container"><canvas id="myChart"></canvas></div>
+		</form>
 
-</div>
+		<p><span id="message"></span></p>
+		<div id="chart-container"><canvas id="myChart"></canvas></div>
+
+	</div>
 
 </body>
 </html>
