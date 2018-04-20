@@ -1,9 +1,12 @@
 from scapy.all import *
 from threading import Thread
 from collections import namedtuple
+import random
 
 from headers import Seer
 from test_data import Data_point, Test_data
+
+FUZZ_THRESHOLD = .3 # fuzz 30% of packets
 
 LOG_LEVEL_MINIMAL = 0
 LOG_LEVEL_VERBOSE = 1
@@ -26,6 +29,28 @@ class Monitor():
             lambda: sniff(filter='seer', prn=self.handle_pkt, count=0))
         # daemon threads don't prevent program from exiting
         self.listen_thread.setDaemon(True)
+
+    def set_test_data(self, test_data):
+        self.test_data = test_data
+
+    def create_test_data(self, pkts, should_fuzz):
+        if not should_fuzz:
+            self.test_data = Test_data([Data_point(p, malicious=False) for p in pkts])
+        else:
+            indices = list(range(len(pkts)))
+            fuzz_indices = []
+            while len(fuzz_indices) < FUZZ_THRESHOLD * len(pkts):
+                i = random.choice(indices)
+                indices.remove(i)
+                fuzz_indices.append(i)
+            data_points = []
+            for i in range(len(pkts)):
+                if i in fuzz_indices:
+                    data_points.append(Data_point(fuzz(pkts[i]), malicious=True))
+                else:
+                    data_points.append(Data_point(pkts[i], malicious=False))
+            self.test_data = Test_data(data_points)
+
 
     def send(self):
         if LOG_LEVEL_VERBOSE == self.log_level:
