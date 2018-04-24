@@ -16,6 +16,7 @@ GET_UPDATE_FUNC = lambda id_: API_BASE + 'car/update?id=%s&key=%s' % (id_, API_K
 UPDATE_ID = '7d93e61d-2dd2-4829-ac94-4a6c5edc52d3'
 GET_UPDATE = GET_UPDATE_FUNC(UPDATE_ID)
 
+TCP_FIN = 0x01
 HTTP_PORT = 80
 
 class API():
@@ -48,7 +49,13 @@ class API():
         # block until packets are received
         data = self.recvall(sock)
 
+        # send fin flag to close TCP connection
+        # and indicate to capture thread to stop
+        sock.shutdown(1)
+
         capture_thread.join()
+
+        sock.close()
 
     # from https://stackoverflow.com/questions/17667903/python-socket-receive-large-amount-of-data?lq=1
     def recvall(self, sock):
@@ -65,8 +72,8 @@ class API():
     # TODO: do we want to capture egress traffic as well?
     def capture_pkts(self):
         # sniff until we see a fin flag
-        pkts = sniff(filter='src host {}'.format(self.api_ip),
-            count=0, stop_filter=lambda p: 'tcp-fin')
+        pkts = sniff(filter='src host {}'.format(self.api_ip), count=0,
+            stop_filter=lambda p: p[TCP].flags & TCP_FIN == TCP_FIN)
         self.recv_pkts.extend(pkts)
 
 def generate_test_data():
