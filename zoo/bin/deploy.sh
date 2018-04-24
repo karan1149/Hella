@@ -1,4 +1,8 @@
-
+#
+# Deploys the Model Zoo to heroku.
+#
+# Usage: ./bin/deploy.sh <git branch to deploy>
+#
 
 # Go to the root of the repo
 cd ..
