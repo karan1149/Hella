@@ -1,1 +1,0 @@
-web: gunicorn --pythonpath zoo run-zoo:app

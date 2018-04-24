@@ -2,9 +2,9 @@ import flask
 from flask import Flask, jsonify, request, render_template
 import os
 import sys
-sys.path.append("../ml")
+sys.path.append("./ml")
 from anomaly_model import AnomalyModel
-sys.path.append("../monitor")
+sys.path.append("./monitor")
 import test_data
 import pickle
 
