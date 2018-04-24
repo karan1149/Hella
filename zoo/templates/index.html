@@ -17,8 +17,8 @@ function sendRequest(){
 	http.onreadystatechange = function() {//Call a function when the state changes.
 	    if(http.readyState == 4 && http.status == 200) {
 	    	response = JSON.parse(http.response)
-	    	message.innerHTML = "Accuracy was " + response[0] + ", recall was " + response[1] + ",  precision was " + response[2] + ".";
-	        alert("Simulation complete!")
+	    	result_str = "Accuracy was " + response[0] + ", recall was " + response[1] + ",  precision was " + response[2] + ".";
+	        alert("Simulation complete! " + result_str)
 	    }
 	}
 	http.send(params);
@@ -60,7 +60,7 @@ function sendRequest(){
 			<option value="{{name[1]}}">{{name[0]}}</option>
 			{% endfor %}
 		</select>
-		
+
 		<br />
 		<a href="#"><button onclick="sendRequest()">Simulate</button></a>
 
