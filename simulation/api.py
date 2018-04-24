@@ -1,9 +1,12 @@
 # based off of https://stackoverflow.com/questions/37683026/how-to-create-http-get-request-scapy/37716000
 
 from scapy.all import *
+from threading import Thread
+
+sys.path.append(os.path.expandvars('../monitor'))
 from test_data import Data_point, Test_data
 
-GET_BASE = 'GET {} HTTP/1.1\r\nHost: seer-autohub.herokuapp.com\r\nAccept-Encoding: gzip, deflate\r\nAccept: */*\r\nConnection: keep-alive\r\n\r\n'
+GET_BASE = 'GET {} HTTP/1.1\r\nHost: seer-autohub.herokuapp.com\r\n\r\n'
 API_DST = 'seer-autohub.herokuapp.com'
 API_BASE = '/api/v1/'
 API_KEY = '0279615b-5cb4-4070-abd9-4b9909aca6af'
@@ -13,24 +16,15 @@ GET_UPDATE_FUNC = lambda id_: API_BASE + 'car/update?id=%s&key=%s' % (id_, API_K
 UPDATE_ID = '7d93e61d-2dd2-4829-ac94-4a6c5edc52d3'
 GET_UPDATE = GET_UPDATE_FUNC(UPDATE_ID)
 
-FIN = 0x01
-SCAPY_PORT = 9999
+TCP_FIN = 0x01
 HTTP_PORT = 80
 
-DATASET_EXT = '.pcap'
-
-"""
-Note:
-The kernal will not recognize the source port as open, so it will
-respond to the API's SYNACK with a reset packet, which will mess
-up the connection. In order to get the kernal to ignore packets destined
-to a certain port, run the following command (it is recommended that you
-do this from a virtual machine instead of modifying your own kernal):
-iptables -t raw -A PREROUTING -p tcp --dport <source port I use for scapy traffic> -j DROP
-"""
 class API():
     def __init__(self):
         self.recv_pkts = []
+
+        socket.setdefaulttimeout(5)
+        self.api_ip = socket.gethostbyname(API_DST)
 
     def drain_pkts(self):
         pkts = self.recv_pkts
@@ -40,43 +34,56 @@ class API():
     def perform_get(self, query):
         print('Performing GET...')
 
+        # sniff traffic from the get on a thread
+        capture_thread = Thread(target=self.capture_pkts)
+        # daemon threads don't prevent program from exiting
+        capture_thread.setDaemon(True)
+        capture_thread.start()
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        sock.connect((self.api_ip, HTTP_PORT))
+
         get = GET_BASE.format(query)
+        sock.sendall(bytes(get, 'utf-8'))
+        # block until packets are received
+        data = self.recvall(sock)
 
-        # Send syn and receive synack
-        syn_pkt = IP(dst=API_DST) / TCP(sport=SCAPY_PORT, dport=80, flags='S')
-        synack_pkt = sr1(syn_pkt, timeout=2)
-        if not synack_pkt: return
-        self.recv_pkts.append(synack_pkt)
+        # send fin flag to close TCP connection
+        # and indicate to capture thread to stop
+        sock.shutdown(1)
 
-        # Create ack with get request
-        ack_pkt = IP(dst=synack_pkt[IP].src) / TCP(sport=synack_pkt.dport,
-            dport=HTTP_PORT, flags='A', seq=synack_pkt.ack, ack=synack_pkt.seq + 1) / get
+        capture_thread.join()
 
+        sock.close()
+
+    # from https://stackoverflow.com/questions/17667903/python-socket-receive-large-amount-of-data?lq=1
+    def recvall(self, sock):
+        BUFF_SIZE = 4096 # 4 KiB
+        data = b''
         while True:
-            reply_pkt = sr1(ack_pkt, timeout=2)
-            if not reply_pkt: break
-            self.recv_pkts.append(reply_pkt)
+            part = sock.recv(BUFF_SIZE)
+            data += part
+            if len(part) < BUFF_SIZE:
+                # either 0 or end of data
+                break
+        return data
 
-            # TODO: update with a full TCP sequence looking for FIN flag
-            contains_response = 'HTTP/1.1' in reply_pkt[TCP].payload
-            if (reply_pkt[TCP].flags & FIN) == FIN or contains_response: break
+    # TODO: do we want to capture egress traffic as well?
+    def capture_pkts(self):
+        # sniff until we see a fin flag
+        pkts = sniff(filter='src host {}'.format(self.api_ip), count=0,
+            stop_filter=lambda p: p[TCP].flags & TCP_FIN == TCP_FIN)
+        self.recv_pkts.extend(pkts)
 
-            data_len = reply_pkt[IP].len - len(IP()) - len(TCP())
-            ackno = reply_pkt[TCP].seq + data_len
-            # original ack packet may have 0 data
-            flags = 'A' if data_len > 0 or ack_pkt[TCP].payload == get else 'AF'
-
-            ack_pkt = IP(dst=reply_pkt[IP].src) / TCP(sport=reply_pkt[TCP].dport,
-                dport=HTTP_PORT, flags=flags, seq=reply_pkt[TCP].ack, ack=ackno)
-
-def generate_test_data(dataset_filename):
+def generate_test_data():
     api = API()
     api.perform_get(GET_UPDATE_INFO)
     api.perform_get(GET_LATEST_UPDATE)
     api.perform_get(GET_UPDATE)
     pkts = api.drain_pkts()
-    if (dataset_filename):
-        if not dataset_filename.endswith(DATASET_EXT):
-            dataset_filename = ''.join([dataset_filename, DATASET_EXT])
-        wrpcap(dataset_filename, pkts)
     return Test_data([Data_point(p, malicious=False) for p in pkts])
+
+# to test that the script runs properly
+if __name__ == '__main__':
+    generate_test_data()

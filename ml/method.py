@@ -3,6 +3,7 @@ from scapy.all import *
 from headers import Seer
 from anomaly_model import AnomalyModel
 from utils import *
+from api import GET_UPDATE, GET_UPDATE_INFO, GET_LATEST_UPDATE
 
 ETH_BROADCAST = 'ff:ff:ff:ff:ff:ff'
 
@@ -10,9 +11,10 @@ ETH_BROADCAST = 'ff:ff:ff:ff:ff:ff'
 ETH_SRC = ETH_BROADCAST
 
 class Method():
-    def __init__(self, send_fn=sendp):
+    def __init__(self, api, send_fn=sendp):
         self.model = AnomalyModel()
         self.load_model()
+        self.api = api
         self.send_fn = send_fn
 
     def load_model(self):
@@ -37,6 +39,10 @@ class Method():
 
             self.model.fit(packets)
             self.model.save('model.pkl')
+
+    def make_requests(self):
+        for r in [GET_UPDATE_INFO, GET_LATEST_UPDATE, GET_UPDATE]:
+            self.api.perform_get(r)
 
     def handle_pkt(self, pkt):
         featurize_fn = featurize_scapy_pkt if 'scapy' in str(type(pkt)) \
