@@ -14,6 +14,7 @@ API_KEY = "0279615b-5cb4-4070-abd9-4b9909aca6af"
 # Get Google keys from environment variables.
 GOOGLE_GEOCODE_KEY = os.environ['GOOGLE_GEOCODE_KEY']
 GOOGLE_PLACES_KEY = os.environ['GOOGLE_PLACES_KEY']
+GOOGLE_ELEVATION_KEY = os.environ['GOOGLE_ELEVATION_KEY']
 
 def require_apikey(view_function):
     @wraps(view_function)
@@ -97,6 +98,22 @@ def get_place_details():
     return abort(HTTPStatus.BAD_REQUEST)
 
   url = GOOGLE_PLACES_DETAILS_URL % (place_id, GOOGLE_PLACES_KEY)
+  resp = requests.get(url)
+  if resp.status_code == requests.codes.ok:
+    return jsonify(resp.json())
+  else:
+    return abort(resp.status_code)
+
+GOOGLE_PLACES_ELEVATION_URL = "https://maps.googleapis.com/maps/api/elevation/json?locations=%s&key=%s"
+@api.route("/car/location/elevation")
+@require_apikey
+def get_elevation():
+  # Returns details about nearby places
+  latlng = request.args.get('latlng')
+  if not latlng:
+    return abort(HTTPStatus.BAD_REQUEST)
+
+  url = GOOGLE_PLACES_ELEVATION_URL % (latlng, GOOGLE_ELEVATION_KEY)
   resp = requests.get(url)
   if resp.status_code == requests.codes.ok:
     return jsonify(resp.json())
