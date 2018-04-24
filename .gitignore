@@ -109,4 +109,4 @@ venv.bak/
 /ml/data
 *~
 
-autohub/set_heroku_env.sh
+autohub/bin/set_heroku_env.sh
