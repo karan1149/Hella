@@ -37,20 +37,13 @@ class Monitor():
         if not should_fuzz:
             self.test_data = Test_data([Data_point(p, malicious=False) for p in pkts])
         else:
-            indices = list(range(len(pkts)))
-            fuzz_indices = []
-            while len(fuzz_indices) < FUZZ_THRESHOLD * len(pkts):
-                i = random.choice(indices)
-                indices.remove(i)
-                fuzz_indices.append(i)
             data_points = []
             for i in range(len(pkts)):
-                if i in fuzz_indices:
+                if random.random() < FUZZ_THRESHOLD:
                     data_points.append(Data_point(fuzz(pkts[i]), malicious=True))
                 else:
                     data_points.append(Data_point(pkts[i], malicious=False))
             self.test_data = Test_data(data_points)
-
 
     def send(self):
         if LOG_LEVEL_VERBOSE == self.log_level:
