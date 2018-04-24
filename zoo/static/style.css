@@ -1,0 +1,11 @@
+body {background:black; font-size: 65px; color: white; font-family: 'Helvetica'; padding-top:30px;}
+span {font-size:30px;}
+button {float:center; margin-top: 30px; font-size: 35px; background: black; color: white; border: 1px solid white; padding: 8px 15px;}
+div { text-align: center;  margin-left: auto; margin-right: auto;}
+button:hover {background: white; color: black;}
+.small {font-size:16px;}
+p {margin-bottom: 20px;}
+#message {font-size: 20px;}
+#myChart {float:center;}
+#chart-container { width: 50%; margin-left:auto; margin-right:auto; height:200px; display: none; margin-bottom: 20px;}
+p {margin-top: .5em;}
