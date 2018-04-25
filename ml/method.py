@@ -1,5 +1,6 @@
 from scapy.all import *
 
+from featurizer import BasicFeaturizer
 from headers import Seer
 from anomaly_model import AnomalyModel
 from utils import *
@@ -21,22 +22,21 @@ class Method():
         try:
             self.model.load('model.pkl')
         except:
+            fr = BasicFeaturizer()
+            
             packets = []
 
-            reader = read_tcpdump_file('data/week1_monday.tcpdump')
-            packets.extend(featurize_packets(reader))
+            packets.extend([fr.featurize(pkt) for pkt in read_scapy_pkts('data/week1_monday.tcpdump')])
 
-            reader = read_tcpdump_file('data/week1_tuesday.tcpdump')
-            packets.extend(featurize_packets(reader))
+            packets.extend([fr.featurize(pkt) for pkt in read_scapy_pkts('data/week1_tuesday.tcpdump')])
 
-            reader = read_tcpdump_file('data/week1_wednesday.tcpdump')
-            packets.extend(featurize_packets(reader))
+            packets.extend([fr.featurize(pkt) for pkt in read_scapy_pkts('data/week1_wednesday.tcpdump')])
 
-            reader = read_tcpdump_file('data/week1_friday.tcpdump')
-            packets.extend(featurize_packets(reader))
+            packets.extend([fr.featurize(pkt) for pkt in read_scapy_pkts('data/week1_friday.tcpdump')])
 
             print("Fitting on %d packets" % len(packets))
 
+            self.model.featurizer = fr
             self.model.fit(packets)
             self.model.save('model.pkl')
 
