@@ -22,38 +22,29 @@ class Method():
         try:
             self.model.load('model.pkl')
         except:
-            with open('features.pkl', 'a+') as f:
-                try: 
-                    featurized_pkts = pickle.load(f)
-                    print("Loaded feauturized packets...")
-                except Exception as e:
-                    print("Unable to load previous packets: ")
-                    print(type(e))
-                    packets = []
+            packets = []
 
-                    reader = read_tcpdump_file('data/week1_monday.tcpdump')
-                    packets.extend(filter_pkts(reader))
+            reader = read_tcpdump_file('data/week1_monday.tcpdump')
+            packets.extend(filter_pkts(reader))
 
-                    reader = read_tcpdump_file('data/week1_tuesday.tcpdump')
-                    packets.extend(filter_pkts(reader))
+            reader = read_tcpdump_file('data/week1_tuesday.tcpdump')
+            packets.extend(filter_pkts(reader))
 
-                    reader = read_tcpdump_file('data/week1_wednesday.tcpdump')
-                    packets.extend(filter_pkts(reader))
+            reader = read_tcpdump_file('data/week1_wednesday.tcpdump')
+            packets.extend(filter_pkts(reader))
 
-                    reader = read_tcpdump_file('data/week1_friday.tcpdump')
-                    packets.extend(filter_pkts(reader))
+            reader = read_tcpdump_file('data/week1_friday.tcpdump')
+            packets.extend(filter_pkts(reader))
 
-                    featurized_pkts = featurizer(packets)
-                    # pickle.dump(featurized_pkts, f)
-                    # print("Saved packets to file features.pkl")
+            featurized_pkts = featurizer(packets)
 
-                print("Fitting on %d packets" % len(featurized_pkts))
-                print("Packet dim is %d" % len(featurized_pkts[0]))
+            print("Fitting on %d packets" % len(featurized_pkts))
+            print("Packet dim is %d" % len(featurized_pkts[0]))
 
-                self.model.featurizer = featurizer
+            self.model.featurizer = featurizer
 
-                self.model.fit(featurized_pkts)
-                self.model.save('model.pkl')
+            self.model.fit(featurized_pkts)
+            self.model.save('model.pkl')
 
     def handle_pkt(self, pkt):
         featurized_pkt = featurize_dpkt_pkt(pkt, self.packet_queue)
