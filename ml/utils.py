@@ -13,6 +13,19 @@ def read_tcpdump_file(tcpdump_file):
     for ts, buf in pcap:
       yield ts, buf
 
+# Reads scapy pkts directly from a tcpdump file
+def read_scapy_pkts(tcpdump_file, max_packets=float('inf')):
+  reader = read_tcpdump_file(tcpdump_file)
+  pkts_read = 0
+  for raw_pkt in reader:
+    scapy_pkt = Ether(raw_pkt[1])
+    if IP in scapy_pkt and TCP in scapy_pkt:   
+        pkts_read += 1
+        yield scapy_pkt
+    if pkts_read > max_packets: 
+        break
+
+
 def featurize_scapy_pkt(pkt):
   """
   Converts a scapy packet into a list of features.
