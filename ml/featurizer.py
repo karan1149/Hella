@@ -13,7 +13,15 @@ class BasicFeaturizer:
 
     def __init__(self):
 
-        pass
+        self.BasicFeatures = self._feature_enum()
+
+    def _feature_enum(self):
+        """
+        Returns an Enum mapping 'time' and all features in IP_HEADER and TCP_HEADER
+        to a range of values beginning at 0
+        """
+
+        return Enum('Features', { feat : i for i, feat in enumerate(['time'] + IP_HEADER + TCP_HEADER) })
 
     def featurize(self, raw_pkt, timestamp=None):
         """
@@ -22,19 +30,20 @@ class BasicFeaturizer:
         timestamp: the artificial timestamp (useful for preexisting, converted packets)
         """
 
-        features = []
+        features = [None for i in self.BasicFeatures]
 
         if timestamp:
-            features.append(timestamp) 
+            features[self.BasicFeatures['time'].value] = timestamp
         else:
-            features.append(raw_pkt.time) 
+            features[self.BasicFeatures['time'].value] = raw_pkt.time
+
         if IP in raw_pkt:
             for feat in IP_HEADER:
-                features.append(getattr(raw_pkt[IP], feat))
+                features[self.BasicFeatures[feat].value] = getattr(raw_pkt[IP], feat)
 
         if TCP in raw_pkt:
             for feat in TCP_HEADER:
-                features.append(getattr(raw_pkt[TCP], feat))
+                features[self.BasicFeatures[feat].value] = getattr(raw_pkt[TCP], feat)
 
         return features
 
