@@ -7,6 +7,7 @@ from anomaly_model import AnomalyModel
 sys.path.append("../monitor")
 import test_data
 import pickle
+from scapy.all import *
 
 dataset_dir = 'datasets/'
 model_dir = 'models/'
@@ -33,17 +34,28 @@ def predict():
 	with open(dataset_path, 'r') as f:
 		test_data = pickle.load(f)
 
-	X_raw = [dp.pkt for dp in test_data.dps]
-	X = model.featurizer(X_raw)
+	fr = getattr(feat_module, model.featurizer)()
+
+	X = [fr.featurize(Ether(dp.pkt[1])) for dp in test_data.dps]
 	print(len(X))
 	Y = [1 if dp.malicious else 0 for dp in test_data.dps]
 
+	start = time.time()
 	pred = model.predicts(X)
+	diff = time.time() - start
+	df = model.model.decision_function(X) 
+
 
 	metrics = model.validation(pred, Y)
-	print(metrics)
+	Y_prime = [-1 if y == 1 else 1 for y in Y]
+	roc_auc = model.roc_curve(df, Y_prime)
+	info = {}
+	info['metrics'] = metrics
+	info['roc_auc'] = roc_auc
+	info['time'] = diff
+	print(info)
 
-	return jsonify(metrics)
+	return jsonify(info)
 
 # Take a model/dataset name and "prettify" it
 # by replacing underscores with spaces and using titlecase
@@ -54,4 +66,5 @@ def make_name_pretty(name):
 	return name
 
 if __name__ == '__main__':
+	feat_module = __import__('featurizer')
 	app.run(host='0.0.0.0', port=8000, debug=True)
