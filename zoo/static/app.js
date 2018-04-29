@@ -56,9 +56,11 @@ function sendRequest(){
 	container.style.display = "none";
 	http.onreadystatechange = function() {//Call a function when the state changes.
 	    if(http.readyState == 4 && http.status == 200) {
-	    	response = JSON.parse(http.response)
-	    	message.innerHTML = "Simulation complete!";
-	        makeChart(response[0], response[1], response[2]);
+	    	response = JSON.parse(http.response);
+	    	console.log(response)
+	    	metrics = response['metrics'];
+	    	message.innerHTML = "Simulation complete in " + response.time + " seconds! ROC_AUC = " + response.roc_auc;
+	        makeChart(metrics[0], metrics[1], metrics[2]);
 	    }
 	}
 	http.send(params);
