@@ -1,6 +1,6 @@
 from scapy.all import *
 
-from featurizer import BasicFeaturizer
+from featurizer import *
 from headers import Seer
 from anomaly_model import AnomalyModel
 from utils import *
@@ -22,8 +22,8 @@ class Method():
         try:
             self.model.load('model.pkl')
         except:
-            fr = BasicFeaturizer()
-            
+            fr = TimeBasedFeaturizer(2)
+
             packets = []
 
             packets.extend([fr.featurize(pkt) for pkt in read_scapy_pkts('data/week1_monday.tcpdump')])
@@ -36,7 +36,7 @@ class Method():
 
             print("Fitting on %d packets" % len(packets))
 
-            self.model.featurizer = fr
+            self.model.featurizer = fr.__class__.__name__
             self.model.fit(packets)
             self.model.save('model.pkl')
 
