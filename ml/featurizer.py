@@ -9,7 +9,7 @@ import time
 IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto']
 TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'flags', 'window']
 
-class BasicFeaturizer:
+class BasicFeaturizer(object):
 
     def __init__(self):
 
@@ -53,7 +53,6 @@ class CountBasedFeaturizer(BasicFeaturizer):
 
         self.pkt_window = pkt_window
         self.pkt_history = deque()
-
         self.BasicFeatures = super(type(self), self)._feature_enum()
 
         self.feature_stats = { feat : defaultdict(int) for feat in self.BasicFeatures }
@@ -185,3 +184,4 @@ if __name__ == '__main__':
             feats = TBF.featurize(raw_pkt)
         if time.time() - start > TBF.sec_window * 2: 
             break
+
