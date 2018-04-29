@@ -4,6 +4,7 @@ from sklearn.ensemble import IsolationForest
 from sklearn.externals import joblib
 import sklearn.metrics as metrics
 import numpy as np
+import matplotlib.pyplot as plt
 DEBUG = True
 
 class AnomalyModel(object):
@@ -39,6 +40,24 @@ class AnomalyModel(object):
     """
     self.model.fit(packets)
 
+  def roc_curve(self, predictions, labels):
+    fpr, tpr, thresholds = metrics.roc_curve(labels, predictions)
+    print(fpr)
+    print(tpr)
+    plt.figure()
+    lw = 2
+    plt.plot(fpr, tpr, color='darkorange',
+             lw=lw, label='ROC curve')
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic')
+    plt.legend(loc="lower right")
+    plt.savefig('plot.png')
+    return np.trapz(tpr, fpr)
+
   def validation(self, predictions, labels):
     """
     Takes a list of packets and a list of labels and computes validation scores
@@ -49,6 +68,7 @@ class AnomalyModel(object):
     - f1 score
     - confusion matrix
     """
+
     accuracy = metrics.accuracy_score(labels, predictions)
     recall = metrics.recall_score(labels, predictions)
     precision = metrics.precision_score(labels, predictions)
