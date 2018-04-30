@@ -109,3 +109,6 @@ venv.bak/
 
 /ml/data
 *~
+
+**/set_heroku_env.sh
+
