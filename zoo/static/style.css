@@ -7,5 +7,6 @@ button:hover {background: white; color: black;}
 p {margin-bottom: 20px;}
 #message {font-size: 20px;}
 #myChart {float:center;}
-#chart-container { width: 50%; margin-left:auto; margin-right:auto; height:200px; display: none; margin-bottom: 20px;}
+#results-container { width: 50%; margin-left:auto; margin-right:auto; height:200px; display: none; margin-bottom: 20px;}
 p {margin-top: .5em;}
+#loading-dots { height: 32px; display: none; position: relative; top:14px;}
