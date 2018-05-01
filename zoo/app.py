@@ -43,15 +43,19 @@ def predict():
 	start = time.time()
 	pred = model.predicts(X)
 	diff = time.time() - start
-	df = model.model.decision_function(X) 
-
+	
+	start_roc = time.time()
+	fpr, tpr, roc_auc = model.roc_points(X, Y)
+	diff_roc = time.time() - start_roc
+	print(diff_roc, "Seconds to calculate ROC points and AUC")
 
 	metrics = model.validation(pred, Y)
-	Y_prime = [-1 if y == 1 else 1 for y in Y]
-	roc_auc = model.roc_curve(df, Y_prime)
+	
 	info = {}
 	info['metrics'] = metrics
 	info['roc_auc'] = roc_auc
+	info['fpr'] = fpr
+	info['tpr'] = tpr
 	info['time'] = diff
 	print(info)
 
