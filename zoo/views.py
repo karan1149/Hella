@@ -5,7 +5,7 @@ import sys
 sys.path.append('./ml')
 from anomaly_model import AnomalyModel
 sys.path.append('./monitor')
-import monitor.test_data
+import test_data
 import pickle
 
 dataset_dir = 'zoo/datasets/'
