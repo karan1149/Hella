@@ -2,12 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.pkl
+
 # C extensions
 *.so
-.DS_Store
+
 autohub-env/
-zoo-env/
 
 # Distribution / packaging
 .Python
@@ -110,5 +109,4 @@ venv.bak/
 /ml/data
 *~
 
-**/set_heroku_env.sh
-
+autohub/bin/set_heroku_env.sh
