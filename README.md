@@ -1,7 +1,40 @@
-# SeeR Model Zoo Web App
+# SeeR
 
-This is a web application to showcase the results of different anomaly detection models running on different datasets. The app is designed to automatically enable "plug and play" of different models on different datasets.
+<img src="https://i.imgur.com/mX3OBNV.png" alt="Seer" width="540" height="185">
 
-To add a model, add the `.pkl` file for the model (generated using `model.save`) to the `models/` directory. Name the model something informative using Python function naming conventions, because the web app will automatically pretty print the name given (e.g. "isolation_forest_contextual.pkl" will be pretty-printed as "Isolation Forest Contextual". The model must reference a valid featurizer (`model.featurizer`). Note that this featurizer is not actually contained within the `.pkl` file, which only contains a reference to the function in other code. Then the featurizer corresponding to a model must be kept in place even after new models have been built.
+SeeR is leveraging the power of deep learning to maximize the security of cloud-connected embedded devices.
 
-To add a dataset, wrap it in the `Test_data` class, pickle it using the pickle module and `pickle.dump`, and then add it to the `datasets/` directory, following the same naming convention mentioned above.
+[Team Song](https://www.youtube.com/embed/a01QQZyl-_I)
+
+[Code Repository](https://github.com/alanefl/seer)
+
+# Team Members
+Member | Email | Photo
+--- | --- | ---
+Karan Singhal | ksinghal@stanford.edu | <img src="https://i.imgur.com/OjaDlnK.jpg" alt="Karan Singhal" width="157.5" height="157.5">
+Pratyaksh (Praty) Sharma | praty@stanford.edu | <img src="https://i.imgur.com/qpkakAD.jpg" alt="Praty Sharma" width="157.5" height="157.5">
+John Kamalu | jkamalu@stanford.edu | <img src="https://i.imgur.com/pebY6bg.jpg" alt="John Kamalu" width="157.5" height="201">
+Sarah Tollman  | stollman@stanford.edu | <img src="https://i.imgur.com/2RB416X.jpg" alt="Sarah Tollman" width="157.5" height="164.4">
+Alan Flores-Lopez | alanf94@stanford.edu | <img src="https://i.imgur.com/y6WLV1M.jpg" alt="Alan Flores-Lopez" width="157.5" height="210">
+
+# Team Skills Matrix:
+
+Member | Hat | Technical Skills | Non-Technical Skills | Personal Traits | Desired Growth | Weaknesses
+--- | --- | --- | --- | --- | --- | ---
+Karan | Blue | AI/deep learning, Python, some systems | Leadership skills, rapid prototyping, experimentation, interviewing people | Logical, cautious, motivated | Product management skills, embedded systems, cybersecurity | Presentation skills, time management
+Praty | White | Deep learning, Systems, Python, some cybersecurity | Team facilitator, leadership skills | Logical, flexible, optimistic | Project management and presentation skills | UI/UX, time management
+John | Black/Yellow | Python, AI/ML, quick prototyping | Small-team work, international work environments | Planner, group-oriented, cautious | UI/UX research and design, security, AI/ML lifecycle | Presentation, prioritization, systems
+Sarah | Blue | Systems, networking, testing | Decision making, some project management, time management | Motivated, logical, direct | Embedded systems & cybersecurity / launching attacks | AI, can be too blunt
+Alan | Black | Python, systems design, systems security, some AI/deep learning | Facilitating groups, managing schedules and tasks | Precise, consistent, reliable, introverted, thinks of the larger picture | IoT security, applying deep learning, group dynamics, managing a budget | Can be fickle, sometimes hard to convince, introverted
+
+
+# Team Communication:
+1. Email us at [emails@cs210hella.mailclark.ai](emails@cs210hella.mailclark.ai)
+
+2. Slack: [cs210hella.slack.com](https://cs210hella.slack.com) (sign up [here](https://cs210hella.slack.com/signup)).
+
+3. OneNote for [documentation](https://1drv.ms/u/s!Avw6AAp_DwlViFTUTzrlhh6ODdQS).
+
+4. [Google Calendar](https://calendar.google.com/calendar/embed?src=stanford.edu_rsg43to2epthvtkim72t0des9o%40group.calendar.google.com&ctz=America%2FLos_Angeles)
+
+5. [Asana](https://app.asana.com/0/536558338426742/calendar) for task management.
