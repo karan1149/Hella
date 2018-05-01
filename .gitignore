@@ -6,7 +6,6 @@ __pycache__/
 # C extensions
 *.so
 
-autohub-env/
 
 # Distribution / packaging
 .Python
@@ -109,4 +108,7 @@ venv.bak/
 /ml/data
 *~
 
-autohub/bin/set_heroku_env.sh
+zoo-env/
+bin/set_heroku_env.sh
+datasets/
+models/
