@@ -112,3 +112,4 @@ zoo-env/
 bin/set_heroku_env.sh
 datasets/
 models/
+autohub/bin/set_heroku_env.sh

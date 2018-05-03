@@ -7,34 +7,51 @@
 
 <body>
 	<div>
-		<p><img src="/static/seer.png" height="200"/></p>
-		<p><span><b>Choose a Model and a Dataset</b></span></p>
+		<p><img src="/static/seer.png" height="175"/></p>
+		<p><span id="tagline"><b>Choose a Model and a Dataset</b></span></p>
 
-		<p><span class="small">The SeeR system will run a live simulation of the model and dataset you choose!<br /></span></p>
+		<p id="second-tagline"><span class="small">The SeeR system will run a live simulation of the model and dataset you choose!<br /></span></p>
 
 		<form>
 
 			<span class="small">Model: </span>
-			<select id="model">
+			<select id="model" onChange="updateDes()">
 				{% for name in model_names %}
-				<option value="{{name[1]}}">{{name[0]}}</option>
+				<option value="{{name[1]}}" title="{{name[2]}}">{{name[0]}}</option>
 				{% endfor %}
-			</select>
+			</select> &nbsp;&nbsp;
+
 
 			<span class="small">Dataset: </span>
-			<select id="dataset">
+			<select id="dataset" onChange="updateDes()">
 				{% for name in dataset_names %}
-				<option value="{{name[1]}}">{{name[0]}}</option>
+				<option value="{{name[1]}}" title="{{name[2]}}">{{name[0]}}</option>
 				{% endfor %}
 			</select>
-
+			<br />
+			<br />
+			<div id="des-container">
+			<span class="des" id="model-des"></span>
+			<br />
+			<span class="des" id="dataset-des"></span>
+			</div>
 			<br />
 			<button type='button' onclick="sendRequest()">Simulate</button>
 
 		</form>
 
-		<p><span id="message"></span></p>
-		<div id="chart-container"><canvas id="myChart"></canvas></div>
+		<span id="message"></span><img src="static/loading_dots.gif" id="loading-dots" alt="Loading..."/>
+
+
+		<div id="results-container">
+			<div id="boxes-container">
+				<div class="num-box"><span id="left"></span><br /><span class="num-box-small">ROC AUC</span></div>
+				<div class="num-box"><span id="mid"></span><br /><span class="num-box-small">Time per pred.</span></div>
+				<div class="num-box"><span id="right"></span><br /><span class="num-box-small">KPI</span></div>
+			</div>
+			<canvas id='barChart'></canvas>
+			<canvas id='lineChart'></canvas>
+		</div>
 
 	</div>
 
