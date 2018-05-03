@@ -67,6 +67,7 @@ def featurize_packets(packets):
     
   return results
 
+
 def filter_pkts(pkts, max_packets=None):
   i = 0
   for ts, buf in pkts:
@@ -90,6 +91,7 @@ def filter_pkts(pkts, max_packets=None):
       continue
     i += 1
     yield (ts, buf)
+
 
 def featurize_dpkt_pkt(pkt):
   return featurize_packets([pkt])[0]

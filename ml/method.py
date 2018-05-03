@@ -22,7 +22,7 @@ class Method():
         try:
             self.model.load('model.pkl')
         except:
-            fr = TimeBasedFeaturizer(2)
+            fr = BasicFeaturizer()
 
             packets = []
 
@@ -37,6 +37,7 @@ class Method():
             print("Fitting on %d packets" % len(packets))
 
             self.model.featurizer = fr.__class__.__name__
+
             self.model.fit(packets)
             self.model.save('model.pkl')
 
