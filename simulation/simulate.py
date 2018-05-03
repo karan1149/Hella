@@ -14,10 +14,12 @@ DATASET_EXT = '.pcap'
 class Simulator():
     # note that in order to use the api, you must run with sudo
     # in order to send and receive real packets with scapy
-    def __init__(self, verbosity, use_api, dataset_filename):
-        self.api = api.API() if use_api else None
-        self.dataset_filename = dataset_filename
-        self.monitor = Monitor(None, send_fn=self.send_to_method, log_level=int(args.verbosity))
+    def __init__(self, model_file, data_file, is_training, verbosity):
+        self.model_file = model_file
+        self.data_file = data_file
+        self.is_training = is_training
+
+        self.monitor = Monitor(None, log_level=verbosity, send_fn=self.send_to_method)
         self.method = Method(self.api, send_fn=self.send_to_monitor)
 
     def generate_test_data(self):
@@ -59,13 +61,17 @@ class Simulator():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--verbosity') # 0 or 1
-    parser.add_argument('--api', action='store_true', default=False)
-    parser.add_argument('--dataset',
-        help='specify a filename for the generated pcap file', type=str)
-    args = parser.parse_args()
-    if args.verbosity is None:
-        args.verbosity = 0
+    parser.add_argument('-v', '--verbose', action='store_true', default=False, help='more log verbosity')
 
-    simulator = Simulator(args.verbosity, args.api, args.dataset)
+    parser.add_argument('model_file')
+
+    parser.add_argument('--data_file', default=None, help='dataset source file')
+
+    train_test = parser.add_mutually_exclusive_group(required=True)
+    train_test.add_argument('--train', action='store_true', help='train the model')
+    train_test.add_argument('--test', action='store_true', help='test the model')
+
+    args = parser.parse_args()
+
+    simulator = Simulator(args.model_file, args.data_file, args.train, int(args.verbose))
     simulator.run()
