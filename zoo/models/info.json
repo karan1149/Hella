@@ -1,0 +1,5 @@
+{
+	"isolation_forest_basic.pkl": "IsolationForest with basic featurization.",
+	"isolation_forest_count-based.pkl": "IsolationForest with count-based featurization.",
+	"isolation_forest_time-based.pkl": "IsolationForest with time-based featurization."
+}
