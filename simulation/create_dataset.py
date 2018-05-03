@@ -91,7 +91,7 @@ if __name__ == '__main__':
 
     parser.add_argument('asset_file', help='the asset history .csv')
     parser.add_argument('data_file', help='the dataset dest. file')
-    
+
     train_test = parser.add_mutually_exclusive_group(required=True)
     train_test.add_argument('--train', action='store_true', help='will output .pkl of scapy packets')
     train_test.add_argument('--test', action='store_true', help='will output .pkl containing Test_data object')    
