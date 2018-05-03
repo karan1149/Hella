@@ -13,6 +13,8 @@ import pickle
 import argparse
 from csv import DictReader
 
+FUZZ_THRESHOLD = .3 # fuzz 30% of packets
+
 class DatasetGenerator:
     """
     Saves packets to file.
@@ -20,10 +22,10 @@ class DatasetGenerator:
     gen_api_data dumps list of packets
     """
 
-    def __init__(self, data_file, asset_file=None, fuzzing=False):
+    def __init__(self, data_file, asset_file, is_training):
         self.data_file = data_file
         self.asset_file = asset_file
-        self.fuzzing = fuzzing
+        self.is_training = is_training
         self.api = api.API()
 
     def gen_api_data(self):
@@ -39,7 +41,21 @@ class DatasetGenerator:
                 self.api.perform_get(func(lat, lng))
 
         pkts = self.api.recv_pkts
-        pickle.dump(pkts, open(self.data_file, 'wb'))        
+
+        if self.is_training:
+            pickle.dump(pkts, open(self.data_file, 'wb')) 
+        else:
+            test_data = self.fuzz_data(pkts)
+            pickle.dump(test_data, open(self.data_file, 'wb'))  
+
+    def fuzz_data(self, pkts):
+        data_points = []
+        for i in range(len(pkts)):
+            if random.random() < FUZZ_THRESHOLD:
+                data_points.append(Data_point(fuzz(pkts[i]), malicious=True))
+            else:
+                data_points.append(Data_point(pkts[i], malicious=False))
+        return Test_data(data_points)           
 
     # Deprecated
     def gen_legacy_data(self, max_packets=200):
@@ -78,10 +94,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('data_file', help='the dataset dest. file')
-    parser.add_argument('--fuzzing', action='store_true', help='inject fuzzed (malicious) packets')
     parser.add_argument('--asset_file', help='the asset history .csv')
+
+    train_test = parser.add_mutually_exclusive_group(required=True)
+    train_test.add_argument('--train', action='store_true', help='will output .pkl of scapy packets')
+    train_test.add_argument('--test', action='store_true', help='will output .pkl containing Test_data object')    
 
     args = parser.parse_args()
 
-    dataset_generator = DatasetGenerator(args.data_file, args.asset_file, args.fuzzing)
+    dataset_generator = DatasetGenerator(args.data_file, args.asset_file, args.train)
     dataset_generator.gen_api_data()

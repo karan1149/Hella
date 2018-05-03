@@ -15,8 +15,6 @@ LOG_LEVEL_DEFAULT = LOG_LEVEL_MINIMAL
 to_pred = lambda prediction: 'MALICIOUS' if prediction else 'BENIGN'
 to_rate = lambda num, denom: 'None' if not denom else '{}%'.format(round((num/float(denom)) * 100, 2))
 
-FUZZ_THRESHOLD = .3 # fuzz 30% of packets
-
 class Monitor():
     def __init__(self, log_level=LOG_LEVEL_DEFAULT, send_fn=sendp):
         self.log_level = log_level
@@ -30,20 +28,8 @@ class Monitor():
         self.listen_thread.setDaemon(True)
 
     def load_data(self, data_file):
-        pkts = pickle.load(open(data_file, 'rb'))
-        self.create_test_data(pkts)
-
-    def create_test_data(self, pkts, fuzzing=True):
-        if not fuzzing:
-            self.test_data = Test_data([Data_point(p, malicious=False) for p in pkts])
-        else:
-            data_points = []
-            for i in range(len(pkts)):
-                if random.random() < FUZZ_THRESHOLD:
-                    data_points.append(Data_point(fuzz(pkts[i]), malicious=True))
-                else:
-                    data_points.append(Data_point(pkts[i], malicious=False))
-            self.test_data = Test_data(data_points)
+        self.test_data = pickle.load(open(data_file, 'rb'))
+        # self.create_test_data(pkts)
 
     def send(self):
         if LOG_LEVEL_VERBOSE == self.log_level:
