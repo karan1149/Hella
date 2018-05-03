@@ -9,7 +9,7 @@ import time
 IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto']
 TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'flags', 'window']
 
-class BasicFeaturizer:
+class BasicFeaturizer(object):
 
     def __init__(self):
 
@@ -26,7 +26,6 @@ class BasicFeaturizer:
     def featurize(self, raw_pkt, timestamp=None):
         """
         Returns a list of basic features as defined by the BasicFeatures enum
-
         raw_pkt: The scapy Packet_metaclass instance to be converted
         timestamp: the artificial timestamp (useful for preexisting, converted packets)
         """
@@ -186,5 +185,3 @@ if __name__ == '__main__':
             feats = TBF.featurize(raw_pkt)
         if time.time() - start > TBF.sec_window * 2: 
             break
-
-

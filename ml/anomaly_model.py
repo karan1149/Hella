@@ -1,15 +1,18 @@
 import sklearn
 import sklearn.ensemble
+from sklearn.ensemble import IsolationForest
 from sklearn.externals import joblib
 import sklearn.metrics as metrics
 import numpy as np
+import matplotlib.pyplot as plt
 DEBUG = True
 
 class AnomalyModel(object):
   def __init__(self):
     """
     """
-    self.model = sklearn.ensemble.IsolationForest()
+    self.model = IsolationForest()
+    self.featurizer = None
 
   def predict(self, packet):
     """
@@ -37,7 +40,15 @@ class AnomalyModel(object):
     """
     self.model.fit(packets)
 
-  def validation(self, packets, labels):
+  # Returns tuple of fpr, tpr points for ROC curve, along with area 
+  # under curve
+  def roc_points(self, X, Y):
+    predictions = self.model.decision_function(X) 
+    labels = [-1 if y == 1 else 1 for y in Y]
+    fpr, tpr, thresholds = metrics.roc_curve(labels, predictions)
+    return fpr.tolist(), tpr.tolist(), np.trapz(tpr, fpr)
+
+  def validation(self, predictions, labels):
     """
     Takes a list of packets and a list of labels and computes validation scores
     for the trained model.
@@ -47,23 +58,24 @@ class AnomalyModel(object):
     - f1 score
     - confusion matrix
     """
-    predictions = self.model.predict(packets)
-    
+
     accuracy = metrics.accuracy_score(labels, predictions)
     recall = metrics.recall_score(labels, predictions)
     precision = metrics.precision_score(labels, predictions)
     f1 = 2 * recall * precision / float(recall + precision)
-    confusion = metrics.confusion_matrix(labels, predictions)
+    confusion = metrics.confusion_matrix(labels, predictions).tolist()
     return accuracy, recall, precision, f1, confusion
 
   def save(self, path):
     """
     Dumps the model to the given path.
     """
-    joblib.dump(self.model, path)
+    joblib.dump({'model': self.model, 'featurizer': self.featurizer}, path)
 
   def load(self, path):
     """
     Loads a model dump from path and initializes class members.
     """
-    self.model = joblib.load(path)
+    save_dict = joblib.load(path)
+    self.model = save_dict['model']
+    self.featurizer = save_dict['featurizer']
