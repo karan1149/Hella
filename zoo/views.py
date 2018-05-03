@@ -38,7 +38,7 @@ def predict():
   model = AnomalyModel()
   model.load(model_path)
 
-  with open(dataset_path, 'r') as f:
+  with open(dataset_path, 'rb') as f:
     test_data = pickle.load(f)
 
   fr = getattr(feat_module, model.featurizer)()
