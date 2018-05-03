@@ -5,25 +5,63 @@ sys.path.append(os.path.expandvars('../ml'))
 sys.path.append(os.path.expandvars('../monitor'))
 from monitor import Monitor
 from method import Method
-import dataset_generator
 import api
 import argparse
 
-DATASET_EXT = '.pcap'
-
 class Simulator():
-    # note that in order to use the api, you must run with sudo
-    # in order to send and receive real packets with scapy
+"""
+This class will eventually simulate real communication between 
+the api, method, and monitor. This behavior only makes sense for
+when the system is "deployed" aka making requests in real time.
+
+Currently, it serves to stitch together the method and monitor 
+(train/test and display) of static data.
+"""
+
     def __init__(self, model_file, data_file, is_training, verbosity):
         self.model_file = model_file
         self.data_file = data_file
         self.is_training = is_training
+        self.verbosity = verbosity
 
-        self.monitor = Monitor(None, log_level=verbosity, send_fn=self.send_to_method)
-        self.method = Method(self.api, send_fn=self.send_to_monitor)
+        # requires sudo to send and receive real packets
+        self.api = api.API()
 
-    def generate_test_data(self):
-        return dataset_generator.generate_test_data('darpa')
+    def train(self):
+        """
+        Train the model on data in data_file and save to model_file
+        model_file: pkl file to write to
+        data_file:  pcap file to read from
+        """
+        self.method = Method(api=self.api, send_fn=self.send_to_monitor)
+        self.method.train_model(self.model_file, self.data_file)
+
+    def test(self):
+        """
+        Test the model loaded from model_file on data in data_file
+        model_file: pkl file to read from
+        data_file:  pcap file to read from
+        verbosity:  verbosity
+        """
+        self.method = Method(api=self.api, send_fn=self.send_to_monitor)   
+        self.method.load_model(self.model_file)
+
+        self.monitor = Monitor(log_level=self.verbosity, send_fn=self.send_to_method)
+        self.monitor.load_data(self.data_file)
+
+        self.monitor.send()
+        while not self.monitor.completed():
+            sleep(.1)
+        self.monitor.show_results() 
+
+    def run(self):
+        """
+        Run the simulation in train or test mode
+        """
+        if self.is_training:
+            self.train()
+        else:
+            self.test()
 
     def send_to_method(self, pkt):
         self.method.handle_pkt(pkt)
@@ -31,39 +69,11 @@ class Simulator():
     def send_to_monitor(self, pkt):
         self.monitor.handle_pkt(pkt)
 
-    def run(self):
-        self.create_test_data()
-
-        self.monitor.send()
-        while not self.monitor.completed():
-            sleep(.1)
-        self.monitor.show_results()
-
-        self.save_to_file()
-
-    def create_test_data(self):
-        print('Gathering test data...')
-        if self.api:
-            self.method.make_requests()
-            pkts = self.api.drain_pkts()
-            self.monitor.create_test_data(pkts, should_fuzz=True)
-        else:
-            test_data = self.generate_test_data()
-            self.monitor.set_test_data(test_data)
-
-    # saves the packets used for the simulation to a file if desired
-    def save_to_file(self):
-        if not self.dataset_filename: return
-
-        if not self.dataset_filename.endswith(DATASET_EXT):
-            self.dataset_filename = ''.join([dataset_filename, DATASET_EXT])
-        wrpcap(self.dataset_filename, pkts)
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='more log verbosity')
 
-    parser.add_argument('model_file')
+    parser.add_argument('model_file', help='the .pkl file to read from / write to')
 
     parser.add_argument('--data_file', default=None, help='dataset source file')
 
