@@ -88,8 +88,6 @@ class DatasetGenerator:
         pickle.dump(DUMMY_TEST_DATA, open(self.data_file, 'wb'))
 
 if __name__ == '__main__':
-    print('Run like so: sudo python3 dataset_generator.py -h')
-
     # sudo python3 dataset_generator.py temp.pkl --asset_file ../../lat_lon/assets/asset77.csv 
     parser = argparse.ArgumentParser()
 
