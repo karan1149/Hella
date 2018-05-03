@@ -4,7 +4,7 @@ from sklearn.ensemble import IsolationForest
 from sklearn.externals import joblib
 import sklearn.metrics as metrics
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 DEBUG = True
 
 class AnomalyModel(object):
@@ -40,10 +40,10 @@ class AnomalyModel(object):
     """
     self.model.fit(packets)
 
-  # Returns tuple of fpr, tpr points for ROC curve, along with area 
+  # Returns tuple of fpr, tpr points for ROC curve, along with area
   # under curve
   def roc_points(self, X, Y):
-    predictions = self.model.decision_function(X) 
+    predictions = self.model.decision_function(X)
     labels = [-1 if y == 1 else 1 for y in Y]
     fpr, tpr, thresholds = metrics.roc_curve(labels, predictions)
     return fpr.tolist(), tpr.tolist(), np.trapz(tpr, fpr)
