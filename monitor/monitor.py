@@ -18,8 +18,7 @@ to_rate = lambda num, denom: 'None' if not denom else '{}%'.format(round((num/fl
 
 
 class Monitor():
-    def __init__(self, test_data, log_level=LOG_LEVEL_DEFAULT, send_fn=sendp):
-        self.test_data = test_data
+    def __init__(self, log_level=LOG_LEVEL_DEFAULT, send_fn=sendp):
         self.log_level = log_level
         self.send_fn = send_fn
 
@@ -30,8 +29,9 @@ class Monitor():
         # daemon threads don't prevent program from exiting
         self.listen_thread.setDaemon(True)
 
-    def set_test_data(self, test_data):
-        self.test_data = test_data
+    def load_data(self, data_file):
+        raw_pkts = rdpcap(data_file)
+        self.create_test_data(pkts, should_fuzz=True)
 
     def create_test_data(self, pkts, should_fuzz):
         if not should_fuzz:
