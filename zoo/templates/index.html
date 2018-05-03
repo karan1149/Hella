@@ -15,7 +15,7 @@
 		<form>
 
 			<span class="small">Model: </span>
-			<select id="model">
+			<select id="model" onChange="updateDes()">
 				{% for name in model_names %}
 				<option value="{{name[1]}}" title="{{name[2]}}">{{name[0]}}</option>
 				{% endfor %}
@@ -23,18 +23,25 @@
 
  
 			<span class="small">Dataset: </span>
-			<select id="dataset">
+			<select id="dataset" onChange="updateDes()">
 				{% for name in dataset_names %}
 				<option value="{{name[1]}}" title="{{name[2]}}">{{name[0]}}</option>
 				{% endfor %}
 			</select>
-			
+			<br /> 
+			<br />
+			<div id="des-container">
+			<span class="des" id="model-des"></span>
+			<br />
+			<span class="des" id="dataset-des"></span>
+			</div>
 			<br />
 			<button type='button' onclick="sendRequest()">Simulate</button>
 
 		</form>
 
 		<span id="message"></span><img src="static/loading_dots.gif" id="loading-dots" alt="Loading..."/>
+
 
 		<div id="results-container">
 			<div id="boxes-container">

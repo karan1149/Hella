@@ -145,6 +145,24 @@ function sendRequest(){
 	http.send(params);
 }
 
+function updateDes(){
+	var modelSelect = document.getElementById('model');
+	var dataSelect = document.getElementById('dataset');
+
+	var modelDes = document.getElementById('model-des');
+	var dataDes = document.getElementById('dataset-des');
+	modelDes.innerHTML = "<b>" + modelSelect.options[modelSelect.selectedIndex].text + ":</b> " + modelSelect.options[modelSelect.selectedIndex].title;
+	dataDes.innerHTML = "<b>" + dataSelect.options[dataSelect.selectedIndex].text + ":</b> " + dataSelect.options[dataSelect.selectedIndex].title;
+
+}
+
+function clearDes(){
+	var modelDes = document.getElementById('model-des');
+	var dataDes = document.getElementById('dataset-des');
+	modelDes.innerText = "";
+	dataDes.innerText = "";
+}
+
 
 function round(number, precision) {
   var shift = function (number, precision, reverseShift) {

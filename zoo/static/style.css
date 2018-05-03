@@ -11,5 +11,7 @@ button:hover {background: white; color: black;}
 p {margin-top: .5em; margin-bottom: 25px;}
 #loading-dots { height: 32px; display: none; position: relative; top:14px;}
 .num-box {display: inline-block; border: 3px solid white; margin-left: 10px; margin-right: 10px; padding: 10px 17px; font-size: 40px;}
+#des-container {width: 60%; max-width: 650px;}
+.des {font-size: 12px; margin-top: 10px; margin-bottom: 10px;}
 .num-box-small {font-size:11px; display:inline;}
 #boxes-container {margin-bottom: 20px; margin-top:45px;}
