@@ -9,16 +9,16 @@ import api
 import argparse
 
 class Simulator():
-"""
-This class will eventually simulate real communication between 
-the api, method, and monitor. This behavior only makes sense for
-when the system is "deployed" aka making requests in real time.
-
-Currently, it serves to stitch together the method and monitor 
-(train/test and display) of static data.
-"""
 
     def __init__(self, model_file, data_file, is_training, verbosity):
+        """
+        This class will eventually simulate real communication between 
+        the api, method, and monitor. This behavior only makes sense for
+        when the system is "deployed" aka making requests in real time.
+
+        Currently, it serves to stitch together the method and monitor 
+        (train/test and display) of static data.
+        """        
         self.model_file = model_file
         self.data_file = data_file
         self.is_training = is_training
@@ -71,11 +71,11 @@ Currently, it serves to stitch together the method and monitor
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--verbose', action='store_true', default=False, help='more log verbosity')
+    parser.add_argument('-v', '--verbose', action='store_true', default=False, help='the log verbosity')
 
-    parser.add_argument('model_file', help='the .pkl file to read from / write to')
+    parser.add_argument('model_file', help='the .pkl file to write to (--train) and read from (--test)')
 
-    parser.add_argument('--data_file', default=None, help='dataset source file')
+    parser.add_argument('--data_file', default=None, help='the .pkl file to read packets from (--train and --test)')
 
     train_test = parser.add_mutually_exclusive_group(required=True)
     train_test.add_argument('--train', action='store_true', help='train the model')

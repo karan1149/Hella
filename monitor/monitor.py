@@ -2,11 +2,10 @@ from scapy.all import *
 from threading import Thread
 from collections import namedtuple
 import random
+import pickle
 
 from headers import Seer
 from test_data import Data_point, Test_data
-
-FUZZ_THRESHOLD = .3 # fuzz 30% of packets
 
 LOG_LEVEL_MINIMAL = 0
 LOG_LEVEL_VERBOSE = 1
@@ -16,6 +15,7 @@ LOG_LEVEL_DEFAULT = LOG_LEVEL_MINIMAL
 to_pred = lambda prediction: 'MALICIOUS' if prediction else 'BENIGN'
 to_rate = lambda num, denom: 'None' if not denom else '{}%'.format(round((num/float(denom)) * 100, 2))
 
+FUZZ_THRESHOLD = .3 # fuzz 30% of packets
 
 class Monitor():
     def __init__(self, log_level=LOG_LEVEL_DEFAULT, send_fn=sendp):
@@ -30,11 +30,11 @@ class Monitor():
         self.listen_thread.setDaemon(True)
 
     def load_data(self, data_file):
-        raw_pkts = rdpcap(data_file)
-        self.create_test_data(pkts, should_fuzz=True)
+        pkts = pickle.load(open(data_file, 'rb'))
+        self.create_test_data(pkts)
 
-    def create_test_data(self, pkts, should_fuzz):
-        if not should_fuzz:
+    def create_test_data(self, pkts, fuzzing=True):
+        if not fuzzing:
             self.test_data = Test_data([Data_point(p, malicious=False) for p in pkts])
         else:
             data_points = []
@@ -88,7 +88,9 @@ class Monitor():
         print('Total packets sent: {}'.format(total_sent))
         print('Total correctly classified: {}'.format(total_correct))
         print('Percent correctly classified: {}'.format(to_rate(total_correct, total_sent)))
+        print('Total malicious packets sent: {}'.format(num_malicious))        
         print('False negative rate: {}'.format(to_rate(num_false_neg, num_malicious)))
+        print('Total benign packets sent: {}'.format(num_benign))                
         print('False positive rate: {}'.format(to_rate(num_false_pos, num_benign)))
         print('##############################################')
 
