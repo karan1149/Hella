@@ -5,7 +5,6 @@ docutils==0.14
 dpkt==1.9.1
 Flask==0.12.
 gunicorn==19.7.1
-futures==3.2.0
 itsdangerous==0.24
 Jinja2==2.10
 jmespath==0.9.3
