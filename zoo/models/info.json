@@ -2,5 +2,6 @@
 	"isolation_forest_basic.pkl": "IsolationForest with basic featurization.",
 	"isolation_forest_count-based.pkl": "IsolationForest with count-based featurization.",
 	"isolation_forest_time-based.pkl": "IsolationForest with time-based featurization.",
-	"python3_isolation_forest.pkl": "IsolationForest for Python3"
+	"python3_isolation_forest.pkl": "IsolationForest for Python3",
+	"python3_scapy_24_isolation_forest.pkl": "IF 24"
 }
