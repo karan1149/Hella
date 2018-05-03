@@ -91,8 +91,8 @@ if __name__ == '__main__':
     # sudo python3 dataset_generator.py temp.pkl --asset_file ../../lat_lon/assets/asset77.csv 
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('asset_file', help='the asset history .csv')
     parser.add_argument('data_file', help='the dataset dest. file')
-    parser.add_argument('--asset_file', help='the asset history .csv')
 
     train_test = parser.add_mutually_exclusive_group(required=True)
     train_test.add_argument('--train', action='store_true', help='will output .pkl of scapy packets')
