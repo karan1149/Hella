@@ -7,8 +7,8 @@
 
 <body>
 	<div>
-		<p><img src="/static/seer.png" height="200"/></p>
-		<p><span><b>Choose a Model and a Dataset</b></span></p>
+		<p><img src="/static/seer.png" height="175"/></p>
+		<p><span id="tagline"><b>Choose a Model and a Dataset</b></span></p>
 
 		<p><span class="small">The SeeR system will run a live simulation of the model and dataset you choose!<br /></span></p>
 
@@ -17,15 +17,15 @@
 			<span class="small">Model: </span>
 			<select id="model">
 				{% for name in model_names %}
-				<option value="{{name[1]}}">{{name[0]}}</option>
+				<option value="{{name[1]}}" title="{{name[2]}}">{{name[0]}}</option>
 				{% endfor %}
-			</select>
+			</select> &nbsp;&nbsp; 
 
-
+ 
 			<span class="small">Dataset: </span>
 			<select id="dataset">
 				{% for name in dataset_names %}
-				<option value="{{name[1]}}">{{name[0]}}</option>
+				<option value="{{name[1]}}" title="{{name[2]}}">{{name[0]}}</option>
 				{% endfor %}
 			</select>
 			
@@ -34,11 +34,16 @@
 
 		</form>
 
-		<p><span id="message"></span><img src="static/loading_dots.gif" id="loading-dots" alt="Loading..."/></p>
+		<span id="message"></span><img src="static/loading_dots.gif" id="loading-dots" alt="Loading..."/>
 
 		<div id="results-container">
-			<canvas id="barChart"></canvas>
-			<canvas id="lineChart"></canvas>
+			<div id="boxes-container">
+				<div class="num-box"><span id="left"></span><br /><span class="num-box-small">ROC AUC</span></div>
+				<div class="num-box"><span id="mid"></span><br /><span class="num-box-small">Time per pred.</span></div>
+				<div class="num-box"><span id="right"></span><br /><span class="num-box-small">KPI</span></div>
+			</div>
+			<canvas id='barChart'></canvas>
+			<canvas id='lineChart'></canvas>
 		</div>
 
 	</div>

@@ -8,6 +8,7 @@ sys.path.append("../monitor")
 import test_data
 import pickle
 from scapy.all import *
+import json
 
 dataset_dir = 'datasets/'
 model_dir = 'models/'
@@ -17,8 +18,8 @@ app = Flask(__name__)
 @app.route('/')
 def index():
 	# Take all files in the appropriate directories matching ".pkl"
-	dataset_names = [(make_name_pretty(name), name) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
-	model_names = [(make_name_pretty(name), name) for name in os.listdir(model_dir) if name.endswith('.pkl')]
+	dataset_names = [(make_name_pretty(name), name, datasets_info[name]) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
+	model_names = [(make_name_pretty(name), name, models_info[name]) for name in os.listdir(model_dir) if name.endswith('.pkl')]
 	return render_template('index.html', dataset_names=dataset_names, model_names=model_names)
 
 @app.route('/predict', methods=['POST'])
@@ -39,6 +40,7 @@ def predict():
 	X = [fr.featurize(Ether(dp.pkt[1])) for dp in test_data.dps]
 	print(len(X))
 	Y = [1 if dp.malicious else 0 for dp in test_data.dps]
+	num_packets = len(Y)
 
 	start = time.time()
 	pred = model.predicts(X)
@@ -49,14 +51,17 @@ def predict():
 	diff_roc = time.time() - start_roc
 	print(diff_roc, "Seconds to calculate ROC points and AUC")
 
+	points = zip(fpr, tpr)
+	points = [{'x': point[0], 'y': point[1]} for point in points]
+
 	metrics = model.validation(pred, Y)
 	
 	info = {}
 	info['metrics'] = metrics
 	info['roc_auc'] = roc_auc
-	info['fpr'] = fpr
-	info['tpr'] = tpr
-	info['time'] = diff
+	info['points'] = points
+	info['time'] = diff * 1.0 / num_packets
+	info['time_total'] = diff
 	print(info)
 
 	return jsonify(info)
@@ -71,4 +76,8 @@ def make_name_pretty(name):
 
 if __name__ == '__main__':
 	feat_module = __import__('featurizer')
+	with open(dataset_dir + "info.json", 'r') as d:
+		with open(model_dir + "info.json", 'r') as m:
+			datasets_info = json.load(d)
+			models_info = json.load(m)
 	app.run(host='0.0.0.0', port=8000, debug=True)
