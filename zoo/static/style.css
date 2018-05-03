@@ -1,0 +1,18 @@
+body {background:black; color: white; font-family: 'Helvetica'; padding-top:30px;}
+button {float:center; margin-top: 30px; font-size: 35px; background: black; color: white; border: 3px solid white; padding: 8px 15px;}
+div { text-align: center;  margin-left: auto; margin-right: auto;}
+button:hover {background: white; color: black;}
+.small {font-size:16px;}
+#message {font-size: 20px;}
+#tagline {font-size: 30px;}
+#lineChart {float:center; margin-top: 30px; margin-bottom: 30px;}
+#barChart {float:center;}
+#results-container { width: 50%; margin-left:auto; margin-right:auto; display: none; margin-bottom: 20px;}
+p {margin-top: .5em; margin-bottom: 25px;}
+#loading-dots { height: 32px; display: none; position: relative; top:14px;}
+.num-box {display: inline-block; border: 3px solid white; margin-left: 10px; margin-right: 10px; padding: 10px 17px; font-size: 40px;}
+#des-container {width: 60%; max-width: 650px;}
+.des {font-size: 12px; margin-top: 10px; margin-bottom: 10px;}
+.num-box-small {font-size:11px; display:inline;}
+#boxes-container {margin-bottom: 20px; margin-top:45px;}
+#second-tagline {margin-bottom:45px;}
