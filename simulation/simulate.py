@@ -73,9 +73,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='the log verbosity')
 
+    parser.add_argument('data_file', help='the .pkl file to read packets from (--train) or Test_data from (--test)')
     parser.add_argument('model_file', help='the .pkl file to write to (--train) and read from (--test)')
-
-    parser.add_argument('--data_file', default=None, help='the .pkl file to read packets from (--train and --test)')
 
     train_test = parser.add_mutually_exclusive_group(required=True)
     train_test.add_argument('--train', action='store_true', help='train the model')

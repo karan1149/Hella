@@ -21,7 +21,7 @@ Steps:
 To run, navigate to /simulation, activate your virtualenv, and run:
 
 ```
-sudo python3 ../simulation/simulate.py [args]
+sudo python3 ../simulation/simulate.py -h
 ```
 
 *sudo and python3 are required by scapy
