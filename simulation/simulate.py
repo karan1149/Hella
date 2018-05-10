@@ -98,7 +98,7 @@ if __name__ == '__main__':
     train_test.add_argument('--train', action='store_true', help='train the model')
     train_test.add_argument('--test', action='store_true', help='test the model')
 
-    parser.add_argument('--featurizer', default=None, type=featurizer_range, help='1 | 2 | 3')
+    parser.add_argument('--featurizer', default=1, type=featurizer_range, help='1: BasicFeaturizer | 2: CountBasedFeaturizer | 3: TimeBasedFeaturizer')
 
     args = parser.parse_args()
 
