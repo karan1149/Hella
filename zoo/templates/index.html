@@ -2,6 +2,11 @@
 <head>
 	<script type="text/javascript" src="/static/Chart.bundle.min.js"></script>
 	<script type="text/javascript" src="/static/app.js"></script>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 	<link rel="stylesheet" type="text/css" href="/static/style.css">
 	
 </head>
@@ -37,29 +42,44 @@
 			<span class="des" id="dataset-des"></span>
 			</div>
 			<br />
-			<button type='button' onclick="sendRequest()">Simulate</button>
+			<button type='button' onclick="sendRequest()" id="simulate-button">Simulate</button>
 
 		</form>
 
 		<span id="message"></span><img src="static/loading_dots.gif" id="loading-dots" alt="Loading..."/>
+
+		<div id="progress-section">
+			<div class="progress" id="bar-wrapper">
+			  <div class="progress-bar progress-bar-success" role="progressbar" style="width:40%"></div>
+			  <div class="progress-bar progress-bar-warning" role="progressbar" style="width:10%"></div>
+			  <div class="progress-bar progress-bar-danger" role="progressbar" style="width:20%"></div>
+			</div>
+			<br />
+			<div class="tooltip-n">What do these colors mean?
+			  <span class="tooltiptext-n">As the bar fills up, packets are being run through the model. Green indicates that 
+			  the model was able to make the correct prediction on a packet. Orange indicates that the model had a false positive,
+			  or a packet that was not anomalous that was classified as anomalous. Red indicates that the model had a false negative,
+			  or a packet that was anomalous that was not classified as anomalous.</span>
+			</div>
+		</div>
 
 
 		<div id="results-container">
 			<div id="boxes-container">
 				<div class="num-box"><span id="left"></span><br />
 					<span class="num-box-small">ROC AUC 
-						<div class="tooltip">?
-						  <span class="tooltiptext">ROC AUC is a metric commmonly used in binary classification that measures how well a model deals with the tradeoff between false positives and total positives.</span>
+						<div class="tooltip-n">?
+						  <span class="tooltiptext-n">ROC AUC is a metric commmonly used in binary classification that measures how well a model deals with the tradeoff between false positives and total positives.</span>
 						</div>
 					</span></div>
 				<div class="num-box"><span id="mid"></span><br /><span class="num-box-small">Time per pred.
-					<div class="tooltip">?
-					  <span class="tooltiptext">This is the time for the model to run per prediction on the current machine.</span>
+					<div class="tooltip-n">?
+					  <span class="tooltiptext-n">This is the time for the model to run per prediction on the current machine.</span>
 					</div>
 				</span></div>
 				<div class="num-box"><span id="right"></span><br /><span class="num-box-small">KPI
-					<div class="tooltip">?
-					  <span class="tooltiptext">The key performance indicator is the ratio of ROC AUC and Time per pred.</span>
+					<div class="tooltip-n">?
+					  <span class="tooltiptext-n">The key performance indicator is the ratio of ROC AUC and Time per pred.</span>
 					</div>
 				</span></div>
 			</div>
