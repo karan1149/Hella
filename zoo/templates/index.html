@@ -3,6 +3,11 @@
 	<script type="text/javascript" src="/static/Chart.bundle.min.js"></script>
 	<script type="text/javascript" src="/static/app.js"></script>
 	<link rel="stylesheet" type="text/css" href="/static/style.css">
+
+	<link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+	<script src="/static/jquery.min.js"></script>
+	<script src="/static/bootstrap.min.js"></script>
+	
 </head>
 
 <body>
@@ -45,9 +50,22 @@
 
 		<div id="results-container">
 			<div id="boxes-container">
-				<div class="num-box"><span id="left"></span><br /><span class="num-box-small">ROC AUC</span></div>
-				<div class="num-box"><span id="mid"></span><br /><span class="num-box-small">Time per pred.</span></div>
-				<div class="num-box"><span id="right"></span><br /><span class="num-box-small">KPI</span></div>
+				<div class="num-box"><span id="left"></span><br />
+					<span class="num-box-small">ROC AUC 
+						<div class="tooltip">?
+						  <span class="tooltiptext">ROC AUC is a metric commmonly used in binary classification that measures how well a model deals with the tradeoff between false positives and total positives.</span>
+						</div>
+					</span></div>
+				<div class="num-box"><span id="mid"></span><br /><span class="num-box-small">Time per pred.
+					<div class="tooltip">?
+					  <span class="tooltiptext">This is the time for the model to run per prediction on the current machine.</span>
+					</div>
+				</span></div>
+				<div class="num-box"><span id="right"></span><br /><span class="num-box-small">KPI
+					<div class="tooltip">?
+					  <span class="tooltiptext">The key performance indicator is the ratio of ROC AUC and Time per pred.</span>
+					</div>
+				</span></div>
 			</div>
 			<canvas id='barChart'></canvas>
 			<canvas id='lineChart'></canvas>

@@ -16,3 +16,43 @@ p {margin-top: .5em; margin-bottom: 25px;}
 .num-box-small {font-size:11px; display:inline;}
 #boxes-container {margin-bottom: 20px; margin-top:45px;}
 #second-tagline {margin-bottom:45px;}
+
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    text-decoration:underline;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #FFF;
+    color: #000;
+    text-align: center;
+    border-radius: 2px;
+    padding: 10px 5;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #FFF transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
