@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, Response
 import os
 import sys
 sys.path.append("../ml")
@@ -25,6 +25,12 @@ def index():
 @app.route('/predict', methods=['POST'])
 def predict():
 	params = request.get_json(silent=True, force=True)
+	
+
+	return Response(generate_predictions(params), mimetype='text/plain')
+
+
+def generate_predictions(params):
 	print(params)
 	model_path = model_dir + params['model']
 	dataset_path = dataset_dir + params['dataset']
@@ -43,7 +49,18 @@ def predict():
 	num_packets = len(Y)
 
 	start = time.time()
-	pred = model.predicts(X)
+	preds = []
+	
+	yield json.dumps({"length": len(X)})
+
+	for i, pkt in enumerate(X):
+		pred = model.predict(pkt)
+		update = {}
+		update['label'] = Y[i]
+		update['output'] = pred
+		yield "\n" + json.dumps(update)
+		preds.append(pred)
+
 	diff = time.time() - start
 	
 	start_roc = time.time()
@@ -54,7 +71,7 @@ def predict():
 	points = zip(fpr, tpr)
 	points = [{'x': point[0], 'y': point[1]} for point in points]
 
-	metrics = model.validation(pred, Y)
+	metrics = model.validation(preds, Y)
 	
 	info = {}
 	info['metrics'] = metrics
@@ -62,9 +79,8 @@ def predict():
 	info['points'] = points
 	info['time'] = diff * 1.0 / num_packets
 	info['time_total'] = diff
-	print(info)
 
-	return jsonify(info)
+	yield "\n" + json.dumps(info)
 
 # Take a model/dataset name and "prettify" it
 # by replacing underscores with spaces and using titlecase
