@@ -16,6 +16,19 @@ GET_UPDATE_FUNC = lambda id_: API_BASE + 'car/update?id=%s&key=%s' % (id_, API_K
 UPDATE_ID = '7d93e61d-2dd2-4829-ac94-4a6c5edc52d3'
 GET_UPDATE = GET_UPDATE_FUNC(UPDATE_ID)
 
+GOOGLE_KEY = '0279615b-5cb4-4070-abd9-4b9909aca6af'
+
+GET_LOCATION_INFO_FN = lambda lat, lon: API_BASE + 'car/location/info?latlng=%s,%s&key=%s' % (lat, lon, GOOGLE_KEY)
+GET_LOCATION_NEARBY_FN = lambda lat, lon: API_BASE + 'car/location/nearby?latlng=%s,%s&key=%s' % (lat, lon, GOOGLE_KEY)
+GET_PLACE_DETAILS_FN = lambda place_id: API_BASE + 'car/place/details?place_id=%s&key=%s' % (place_id, GOOGLE_KEY)
+GET_LOCATION_ELEVATION_FN = lambda lat, lon: API_BASE + 'car/location/elevation?latlng=%s,%s&key=%s' % (lat, lon, GOOGLE_KEY)
+
+GOOGLE_LOCATION_FUNCS = [
+    GET_LOCATION_INFO_FN,
+    GET_LOCATION_NEARBY_FN,
+    GET_LOCATION_ELEVATION_FN
+]
+
 TCP_FIN = 0x01
 HTTP_PORT = 80
 
@@ -78,6 +91,7 @@ class API():
 
 def generate_test_data():
     api = API()
+    api.perform_get(GET_LOCATION_ELEVATION_FN(0, 0))
     api.perform_get(GET_UPDATE_INFO)
     api.perform_get(GET_LATEST_UPDATE)
     api.perform_get(GET_UPDATE)
