@@ -1,14 +1,7 @@
-from time import sleep
-
 import sys, os
 sys.path.append(os.path.expandvars('../ml'))
-sys.path.append(os.path.expandvars('../monitor'))
-from monitor import Monitor
-from method import Method
 from featurizer import BasicFeaturizer, CountBasedFeaturizer, TimeBasedFeaturizer
-import api
 import argparse
-from scapy.all import *
 from simulate import Simulator
 
 featurizer_classes = { 1: BasicFeaturizer, 2: CountBasedFeaturizer, 3: TimeBasedFeaturizer}
