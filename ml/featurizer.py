@@ -7,7 +7,8 @@ from utils import *
 import time
 
 IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto']
-TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'flags', 'window']
+# edited to remove flags for breakathon
+TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'window']
 
 class BasicFeaturizer(object):
 
