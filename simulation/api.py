@@ -53,7 +53,7 @@ class API():
         # and indicate to capture thread to stop
         sock.shutdown(1)
 
-        capture_thread.join()
+        capture_thread.join(timeout=1)
 
         sock.close()
 

@@ -8,6 +8,7 @@ from method import Method
 import dataset_generator
 import api
 import argparse
+from scapy.all import *
 
 DATASET_EXT = '.pcap'
 
@@ -43,8 +44,8 @@ class Simulator():
         print('Gathering test data...')
         if self.api:
             self.method.make_requests()
-            pkts = self.api.drain_pkts()
-            self.monitor.create_test_data(pkts, should_fuzz=True)
+            self.pkts = self.api.drain_pkts()
+            self.monitor.create_test_data(self.pkts, should_fuzz=True)
         else:
             test_data = self.generate_test_data()
             self.monitor.set_test_data(test_data)
@@ -55,7 +56,7 @@ class Simulator():
 
         if not self.dataset_filename.endswith(DATASET_EXT):
             self.dataset_filename = ''.join([dataset_filename, DATASET_EXT])
-        wrpcap(self.dataset_filename, pkts)
+        wrpcap(self.dataset_filename, self.pkts)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -66,6 +67,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.verbosity is None:
         args.verbosity = 0
-
     simulator = Simulator(args.verbosity, args.api, args.dataset)
     simulator.run()
