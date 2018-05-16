@@ -1,7 +1,8 @@
 body {background:black; color: white; font-family: 'Helvetica'; padding-top:30px;}
-button {float:center; margin-top: 30px; font-size: 35px; background: black; color: white; border: 3px solid white; padding: 8px 15px;}
+button {float:center; margin-top: 10px; font-size: 35px; background: black; color: white; border: 3px solid white; padding: 8px 15px;}
 div { text-align: center;  margin-left: auto; margin-right: auto;}
 button:hover {background: white; color: black;}
+select {color: black;}
 .small {font-size:16px;}
 #message {font-size: 20px;}
 #tagline {font-size: 30px;}
@@ -9,10 +10,54 @@ button:hover {background: white; color: black;}
 #barChart {float:center;}
 #results-container { width: 50%; margin-left:auto; margin-right:auto; display: none; margin-bottom: 20px;}
 p {margin-top: .5em; margin-bottom: 25px;}
-#loading-dots { height: 32px; display: none; position: relative; top:14px;}
+#loading-dots { height: 32px; display: none; position: relative; top:1px;}
 .num-box {display: inline-block; border: 3px solid white; margin-left: 10px; margin-right: 10px; padding: 10px 17px; font-size: 40px;}
 #des-container {width: 60%; max-width: 650px;}
 .des {font-size: 12px; margin-top: 10px; margin-bottom: 10px;}
 .num-box-small {font-size:11px; display:inline;}
 #boxes-container {margin-bottom: 20px; margin-top:45px;}
 #second-tagline {margin-bottom:45px;}
+
+div.progress { width: auto; margin-top:40px; display: inline-block; min-width: 500px;}
+#progress-section .tooltip-n { font-size: 12px; }
+#progress-section {display:none;}
+
+
+.tooltip-n {
+    position: relative;
+    display: inline-block;
+    text-decoration:underline;
+}
+
+.tooltip-n .tooltiptext-n {
+    visibility: hidden;
+    width: 200px;
+    background-color: #FFF;
+    color: #000;
+    text-align: center;
+    border-radius: 2px;
+    padding: 10px 5;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip-n .tooltiptext-n::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #FFF transparent transparent transparent;
+}
+
+.tooltip-n:hover .tooltiptext-n {
+    visibility: visible;
+    opacity: 1;
+}

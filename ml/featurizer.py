@@ -7,6 +7,7 @@ from utils import *
 import time
 
 IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto']
+#TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'flags', 'window']
 # edited to remove flags for breakathon
 TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'window']
 
@@ -63,7 +64,7 @@ class CountBasedFeaturizer(BasicFeaturizer):
         """
         Removes old featurized packets from self.pkt_history
         Updates self.feature_stats
-        """     
+        """
 
         if len(self.pkt_history) > self.pkt_window:
 
@@ -83,7 +84,7 @@ class CountBasedFeaturizer(BasicFeaturizer):
 
         for feat in self.BasicFeatures:
 
-            self.feature_stats[feat][pkt[feat.value]] += 1  
+            self.feature_stats[feat][pkt[feat.value]] += 1
 
     def _update_history(self, pkt):
         """
@@ -119,7 +120,7 @@ class TimeBasedFeaturizer(BasicFeaturizer):
         """
         Removes old featurized packets from self.pkt_history
         Updates self.feature_stats
-        """     
+        """
 
         now = pkt[self.BasicFeatures.time.value]
 
@@ -141,7 +142,7 @@ class TimeBasedFeaturizer(BasicFeaturizer):
 
         for feat in self.BasicFeatures:
 
-            self.feature_stats[feat][pkt[feat.value]] += 1  
+            self.feature_stats[feat][pkt[feat.value]] += 1
 
     def _update_history(self, pkt):
         """
@@ -159,21 +160,21 @@ class TimeBasedFeaturizer(BasicFeaturizer):
 
         pkt.extend([self.feature_stats[self.BasicFeatures(i)][pkt[i]] for i in range(len(pkt))])
 
-        return pkt        
+        return pkt
 
 if __name__ == '__main__':
     reader = read_tcpdump_file('data/week1_friday.tcpdump')
 
     print('Test CountBasedFeaturizer')
     CBF = CountBasedFeaturizer(50)
-    pkts_read = 0    
+    pkts_read = 0
     while True:
         pkt_read = reader.__next__()
         raw_pkt = Ether(pkt_read[1])
-        if IP in raw_pkt and TCP in raw_pkt:   
+        if IP in raw_pkt and TCP in raw_pkt:
             feats = CBF.featurize(raw_pkt)
             pkts_read += 1
-        if pkts_read > CBF.pkt_window * 2: 
+        if pkts_read > CBF.pkt_window * 2:
             break
 
     print('Test TimeBasedFeaturizer')
@@ -182,7 +183,7 @@ if __name__ == '__main__':
     while True:
         pkt_read = reader.__next__()
         raw_pkt = Ether(pkt_read[1])
-        if IP in raw_pkt and TCP in raw_pkt:   
+        if IP in raw_pkt and TCP in raw_pkt:
             feats = TBF.featurize(raw_pkt)
-        if time.time() - start > TBF.sec_window * 2: 
+        if time.time() - start > TBF.sec_window * 2:
             break
