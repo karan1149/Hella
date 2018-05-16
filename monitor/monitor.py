@@ -1,6 +1,8 @@
 from scapy.all import *
 from threading import Thread
 from collections import namedtuple
+import random
+import pickle
 
 from headers import Seer
 from test_data import Data_point, Test_data
@@ -13,10 +15,8 @@ LOG_LEVEL_DEFAULT = LOG_LEVEL_MINIMAL
 to_pred = lambda prediction: 'MALICIOUS' if prediction else 'BENIGN'
 to_rate = lambda num, denom: 'None' if not denom else '{}%'.format(round((num/float(denom)) * 100, 2))
 
-
 class Monitor():
-    def __init__(self, test_data, log_level=LOG_LEVEL_DEFAULT, send_fn=sendp):
-        self.test_data = test_data
+    def __init__(self, log_level=LOG_LEVEL_DEFAULT, send_fn=sendp):
         self.log_level = log_level
         self.send_fn = send_fn
 
@@ -26,6 +26,10 @@ class Monitor():
             lambda: sniff(filter='seer', prn=self.handle_pkt, count=0))
         # daemon threads don't prevent program from exiting
         self.listen_thread.setDaemon(True)
+
+    def load_data(self, data_file):
+        self.test_data = pickle.load(open(data_file, 'rb'))
+        # self.create_test_data(pkts)
 
     def send(self):
         if LOG_LEVEL_VERBOSE == self.log_level:
@@ -70,7 +74,9 @@ class Monitor():
         print('Total packets sent: {}'.format(total_sent))
         print('Total correctly classified: {}'.format(total_correct))
         print('Percent correctly classified: {}'.format(to_rate(total_correct, total_sent)))
+        print('Total malicious packets sent: {}'.format(num_malicious))        
         print('False negative rate: {}'.format(to_rate(num_false_neg, num_malicious)))
+        print('Total benign packets sent: {}'.format(num_benign))                
         print('False positive rate: {}'.format(to_rate(num_false_pos, num_benign)))
         print('##############################################')
 

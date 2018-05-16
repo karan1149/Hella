@@ -1,66 +1,53 @@
+from os import path
+import pickle
+import sys
+
 from scapy.all import *
+
+from featurizer import *
 from headers import Seer
 from anomaly_model import AnomalyModel
 from utils import *
-
-import pickle
+from api import GET_UPDATE, GET_UPDATE_INFO, GET_LATEST_UPDATE
 
 ETH_BROADCAST = 'ff:ff:ff:ff:ff:ff'
 
 # TODO: update with actual ethernet address of ECU
 ETH_SRC = ETH_BROADCAST
-WINDOW_SIZE = 20
 
 class Method():
-    def __init__(self, send_fn=sendp):
-        self.model = AnomalyModel()
-        self.load_model()
+    def __init__(self, api=None, send_fn=sendp):
+        self.api = api
         self.send_fn = send_fn
-        self.packet_queue = deque()
 
-    def load_model(self):
+        self.model = AnomalyModel()
+
+    def load_model(self, model_file):
         try:
-            self.model.load('model.pkl')
+            self.model.load(model_file)
         except:
-            with open('features.pkl', 'a+') as f:
-                try: 
-                    featurized_pkts = pickle.load(f)
-                    print("Loaded feauturized packets...")
-                except Exception as e:
-                    print("Unable to load previous packets: ")
-                    print(type(e))
-                    packets = []
+            print("Unable to load %s. Abort.)" % (model_file))
+            exit(0)
 
-                    reader = read_tcpdump_file('data/week1_monday.tcpdump')
-                    packets.extend(filter_pkts(reader))
+    def train_model(self, model_file, data_file, featurizer=BasicFeaturizer):
+        fr = featurizer()
+        raw_pkts = pickle.load(open(data_file, 'rb'))
+        pkts = [fr.featurize(raw_pkt) for raw_pkt in raw_pkts]
+        self.model.featurizer = fr.__class__.__name__
 
-                    reader = read_tcpdump_file('data/week1_tuesday.tcpdump')
-                    packets.extend(filter_pkts(reader))
+        print("Fitting on %d packets" % len(pkts))
 
-                    reader = read_tcpdump_file('data/week1_wednesday.tcpdump')
-                    packets.extend(filter_pkts(reader))
+        self.model.fit(pkts)
+        self.model.save(model_file)
 
-                    reader = read_tcpdump_file('data/week1_friday.tcpdump')
-                    packets.extend(filter_pkts(reader))
-
-                    featurized_pkts = featurizer(packets)
-                    # pickle.dump(featurized_pkts, f)
-                    # print("Saved packets to file features.pkl")
-
-                print("Fitting on %d packets" % len(featurized_pkts))
-                print("Packet dim is %d" % len(featurized_pkts[0]))
-
-                self.model.featurizer = featurizer
-
-                self.model.fit(featurized_pkts)
-                self.model.save('model.pkl')
+    def make_requests(self):
+        for r in [GET_UPDATE_INFO, GET_LATEST_UPDATE, GET_UPDATE]:
+            self.api.perform_get(r)
 
     def handle_pkt(self, pkt):
-        featurized_pkt = featurize_dpkt_pkt(pkt, self.packet_queue)
-        self.packet_queue.append(featurized_pkt)
-        # Max len is WINDOW_SIZE - 1
-        if len(self.packet_queue) > WINDOW_SIZE:
-            self.packet_queue.popleft()
+        fr = getattr(sys.modules[__name__], self.model.featurizer)()
+
+        featurized_pkt = fr.featurize(pkt)
         prediction = self.model.predict(featurized_pkt)
         ether = Ether(dst=ETH_BROADCAST, src=ETH_SRC)
         seer = Seer(malicious=prediction, data=pkt)

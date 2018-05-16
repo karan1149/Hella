@@ -5,38 +5,71 @@ sys.path.append(os.path.expandvars('../ml'))
 sys.path.append(os.path.expandvars('../monitor'))
 from monitor import Monitor
 from method import Method
-from dataset_generator import generate_test_data
+from featurizer import BasicFeaturizer, CountBasedFeaturizer, TimeBasedFeaturizer
+import api
 import argparse
-import pickle
+from scapy.all import *
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--verbosity') # 0 or 1
-args = parser.parse_args()
-if args.verbosity is None:
-    args.verbosity = 0
+featurizer_classes = { 1: BasicFeaturizer, 2: CountBasedFeaturizer, 3: TimeBasedFeaturizer}
 
 class Simulator():
-    def __init__(self):
-        print('Gathering test data...')
-        test_data = generate_test_data('darpa')
-        with open('darpa_400.pkl', 'w') as f:
-            pickle.dump(test_data, f)
-        self.monitor = Monitor(test_data, send_fn=self.send_to_method, log_level=int(args.verbosity))
-        self.method = Method(send_fn=self.send_to_monitor)
+
+    def __init__(self, model_file, data_file, is_training, verbosity, featurizer=None):
+        """
+        This class will eventually simulate real communication between 
+        the api, method, and monitor. This behavior only makes sense for
+        when the system is "deployed" aka making requests in real time.
+
+        Currently, it serves to stitch together the method and monitor 
+        (train/test and display) of static data.
+        """        
+        self.model_file = model_file
+        self.data_file = data_file
+        self.is_training = is_training
+        self.verbosity = verbosity
+        self.featurizer = featurizer
+
+        # requires sudo to send and receive real packets
+        self.api = api.API()
+
+    def train(self):
+        """
+        Train the model on data in data_file and save to model_file
+        model_file: pkl file to write to
+        data_file:  pcap file to read from
+        """
+        self.method = Method(api=self.api, send_fn=self.send_to_monitor)
+        self.method.train_model(self.model_file, self.data_file, self.featurizer)
+
+    def test(self):
+        """
+        Test the model loaded from model_file on data in data_file
+        model_file: pkl file to read from
+        data_file:  pcap file to read from
+        verbosity:  verbosity
+        """
+        self.method = Method(api=self.api, send_fn=self.send_to_monitor)   
+        self.method.load_model(self.model_file)
+
+        self.monitor = Monitor(log_level=self.verbosity, send_fn=self.send_to_method)
+        self.monitor.load_data(self.data_file)
+
+        self.monitor.send()
+        while not self.monitor.completed():
+            sleep(.1)
+        self.monitor.show_results() 
+
+    def run(self):
+        """
+        Run the simulation in train or test mode
+        """
+        if self.is_training:
+            self.train()
+        else:
+            self.test()
 
     def send_to_method(self, pkt):
         self.method.handle_pkt(pkt)
 
     def send_to_monitor(self, pkt):
         self.monitor.handle_pkt(pkt)
-
-    def run(self):
-        self.monitor.send()
-        while not self.monitor.completed():
-            sleep(.1)
-        self.monitor.show_results()
-
-
-if __name__ == '__main__':
-    simulator = Simulator()
-    simulator.run()
