@@ -1,0 +1,30 @@
+{
+	"elevation": {
+		"frequency": 30,
+		"prob": 1.0
+	},
+	"places_nearby": {
+		"frequency": 1,
+		"prob_night": 0.1,
+		"prob_day": 0.1
+	},
+	"location_info": {
+		"frequency": 60,
+		"prob": 0.5
+	},
+	"weather": {
+		"frequency": 45,
+		"prob": 0.2
+	},
+	"news": {
+		"frequency": 60,
+		"prob_weekday_morning": 0.1,
+		"prob_weekday_day": 0.1,
+		"prob_weekend_morning": 0.1,
+		"prob_weekend_day": 0.1
+	},
+	"update": {
+		"frequency": 3600,
+		"prob": 0.1
+	}
+}
