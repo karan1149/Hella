@@ -1,3 +1,7 @@
+from os import path
+import pickle
+import sys
+
 from scapy.all import *
 
 from featurizer import *
@@ -12,43 +16,38 @@ ETH_BROADCAST = 'ff:ff:ff:ff:ff:ff'
 ETH_SRC = ETH_BROADCAST
 
 class Method():
-    def __init__(self, api, send_fn=sendp):
-        self.model = AnomalyModel()
-        self.load_model()
+    def __init__(self, api=None, send_fn=sendp):
         self.api = api
         self.send_fn = send_fn
 
-    def load_model(self):
+        self.model = AnomalyModel()
+
+    def load_model(self, model_file):
         try:
-            self.model.load('model.pkl')
+            self.model.load(model_file)
         except:
-            fr = BasicFeaturizer()
+            print("Unable to load %s. Abort.)" % (model_file))
+            exit(0)
 
-            packets = []
+    def train_model(self, model_file, data_file, featurizer=BasicFeaturizer):
+        fr = featurizer()
+        raw_pkts = pickle.load(open(data_file, 'rb'))
+        pkts = [fr.featurize(raw_pkt) for raw_pkt in raw_pkts]
+        self.model.featurizer = fr.__class__.__name__
 
-            packets.extend([fr.featurize(pkt) for pkt in read_scapy_pkts('data/week1_monday.tcpdump')])
+        print("Fitting on %d packets" % len(pkts))
 
-            packets.extend([fr.featurize(pkt) for pkt in read_scapy_pkts('data/week1_tuesday.tcpdump')])
-
-            packets.extend([fr.featurize(pkt) for pkt in read_scapy_pkts('data/week1_wednesday.tcpdump')])
-
-            packets.extend([fr.featurize(pkt) for pkt in read_scapy_pkts('data/week1_friday.tcpdump')])
-
-            print("Fitting on %d packets" % len(packets))
-
-            self.model.featurizer = fr.__class__.__name__
-
-            self.model.fit(packets)
-            self.model.save('model.pkl')
+        self.model.fit(pkts)
+        self.model.save(model_file)
 
     def make_requests(self):
         for r in [GET_UPDATE_INFO, GET_LATEST_UPDATE, GET_UPDATE]:
             self.api.perform_get(r)
 
     def handle_pkt(self, pkt):
-        featurize_fn = featurize_scapy_pkt if 'scapy' in str(type(pkt)) \
-            else featurize_dpkt_pkt
-        featurized_pkt = featurize_fn(pkt)
+        fr = getattr(sys.modules[__name__], self.model.featurizer)()
+
+        featurized_pkt = fr.featurize(pkt)
         prediction = self.model.predict(featurized_pkt)
         ether = Ether(dst=ETH_BROADCAST, src=ETH_SRC)
         seer = Seer(malicious=prediction, data=pkt)
