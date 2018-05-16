@@ -3,6 +3,11 @@ import argparse
 import csv
 import datetime
 import collections
+import pickle
+
+from numpy import random
+
+import api
 
 class DataGenerator():
 
@@ -15,6 +20,8 @@ class DataGenerator():
 		raw_asset = self.read_asset_file(self.asset_file)
 		self.data_points = self.process_asset(raw_asset)
 		self.config = self.read_config_file()
+
+		self.api = api.API()
 
 	def read_asset_file(self, in_file):
 		"""
@@ -103,22 +110,74 @@ class DataGenerator():
 
 	def build_dataset(self):
 
-		seconds_passed = 0
+		init_datetime = datetime.datetime.fromtimestamp(self.data_points[0][0])
+		seconds_passed = init_datetime.minute * 60 + init_datetime.second
 
 		for time, lat, lon in self.data_points:
 			now_datetime = datetime.datetime.fromtimestamp(time)
 
 			is_weekday = now_datetime.weekday() < 5
+			is_weekend = not is_weekday
 			is_dawn = now_datetime.hour >= 0 and now_datetime.hour < 6
 			is_morning = now_datetime.hour >= 6 and now_datetime.hour < 12
 			is_afternoon = now_datetime.hour >= 12 and now_datetime.hour < 18
 			is_evening = now_datetime.hour >= 18 and now_datetime.hour < 24
 
-			do_elevation = seconds_passed % self.config['elevation']['frequency'] == 0
-			do_places	 = seconds_passed % self.config['places_nearby']['frequency'] == 0
-			do_location	 = seconds_passed % self.config['location_info']['frequency'] == 0
-			do_weather	 = seconds_passed % self.config['weather']['frequency'] == 0
-			do_news		 = seconds_passed % self.config['news']['frequency'] == 0
+			do_elevation = seconds_passed % self.config['elevation']['frequency'] == 0 and \
+						   random.binomial(1, self.config['elevation']['prob']) == 1
+
+			do_places 	 = seconds_passed % self.config['places_nearby']['frequency'] == 0 and \
+						   (
+							   (random.binomial(1, self.config['places_nearby']['prob_night']) == 1 and (is_dawn or is_evening)) or
+							   (random.binomial(1, self.config['places_nearby']['prob_day']) == 1 and (is_morning or is_afternoon))
+						   )
+
+			do_location	 = seconds_passed % self.config['location_info']['frequency'] == 0 and \
+						   random.binomial(1, self.config['elevation']['prob']) == 1
+
+
+			do_weather	 = seconds_passed % self.config['weather']['frequency'] == 0 and \
+						   random.binomial(1, self.config['elevation']['prob']) == 1
+
+
+			do_news		 = seconds_passed % self.config['news']['frequency'] == 0 and \
+						   (
+							   (random.binomial(1, self.config['news']['prob_weekday_morning']) == 1 and is_morning and is_weekday) or
+							   (random.binomial(1, self.config['news']['prob_weekday_day']) == 1 and (is_afternoon or is_weekday)) or
+							   (random.binomial(1, self.config['news']['prob_weekend_morning']) == 1 and is_morning and is_weekend) or
+							   (random.binomial(1, self.config['news']['prob_weekend_day']) == 1 and (is_afternoon or is_weekend))
+						   )
+
+			do_update 	 = seconds_passed % self.config['update']['frequency'] == 0 and \
+						   random.binomial(1, self.config['update']['prob']) == 1
+
+			do_check_updates 	 = seconds_passed % self.config['check_updates']['frequency'] == 0 and \
+						   		   random.binomial(1, self.config['check_updates']['prob']) == 1
+
+			if do_elevation: 
+				self.api.perform_get(api.GET_LOCATION_ELEVATION_FN(lat, lon))
+			if do_places: 
+				self.api.perform_get(api.GET_LOCATION_NEARBY_FN(lat, lon))
+			if do_location: 
+				self.api.perform_get(api.GET_LOCATION_INFO_FN(lat, lon))
+			if do_weather: 
+				self.api.perform_get(api.GET_LOCATION_WEATHER_FN(lat, lon))
+			if do_news: 
+				self.api.perform_get(api.GET_NEWS_HEADLINES_FN)
+			if do_update:
+				self.api.perform_get(api.GET_LATEST_UPDATE)
+			if do_check_updates:
+				self.api.perform_get(api.GET_UPDATE_INFO)
+
+		raw_packets = self.api.drain_pkts()
+		self.dataset = raw_packets
+		self.save_dataset(raw_packets)
+
+		return raw_packets
+
+	def save_dataset(self, raw_packets):
+		pickle.dump(raw_packets, open(self.out_file, 'wb'))  
+
 
 if __name__ == '__main__':
 
