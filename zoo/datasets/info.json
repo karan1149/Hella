@@ -1,4 +1,5 @@
 {
-	"darpa_1000.pkl": "1000 packet dataset from DARPA blah blah 1000 packet dataset from DARPA blah blah 1000 packet dataset from DARPA blah blah",
-	"darpa_400.pkl": "400 packet dataset from DARPA"
+	"darpa_1000.pkl": "1000 packet dataset from DARPA. 500 packets are normal network traffic, and the other 500 include attacks.",
+	"darpa_400.pkl": "400 packet dataset from DARPA. 200 packets are normal network traffic, and the other 200 include attacks.",
+	"API_1k.pkl": "API dataset with 1k packets."
 }
