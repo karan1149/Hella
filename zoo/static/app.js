@@ -5,6 +5,11 @@ function makeChart(info){
 	var precision = metrics[2];
 	var points = info['points'];
 
+	accuracy = round(accuracy * 100, 2);
+	precision = round(precision * 100, 2);
+	recall = round(recall * 100, 2);
+
+
 	container = document.getElementById("results-container");
 	container.style.display = "block";
 
@@ -24,9 +29,9 @@ function makeChart(info){
 	var myChart = new Chart(ctx, {
 	    type: 'horizontalBar',
 	    data: {
-	        labels: ["Accuracy", "Recall", "Precision"],
+	        labels: ["Accuracy (" + accuracy + "%)", "Recall (" + recall + "%)", "Precision (" + precision + "%)"],
 	        datasets: [{
-	        	label: "Fraction of test examples",
+	        	label: "Percent of test examples",
 	            data: [accuracy, recall, precision],
 	            backgroundColor: [
 	                'rgba(255, 99, 132, 0.2)',
@@ -51,7 +56,7 @@ function makeChart(info){
 	                ticks: {
 	                    beginAtZero:true
 	                },
-	                scaleLabel: {display: true, labelString: "Fraction of Test Examples"}
+	                scaleLabel: {display: true, labelString: "Percent of Test Examples"}
 	            }]
 	        }
 	    }
@@ -75,7 +80,12 @@ function makeChart(info){
 	            ],
 	            borderWidth: 3,
 	            lineTension: 1,
-	            pointRadius: 0
+	            pointRadius: 0,
+	            spanGaps: true,
+	            pointBorderColor: 'rgba(35, 150, 102, 1)',
+	            pointBackgroundColor: 'rgba(35, 150, 102, 1)',
+	            pointHoverBorderColor: 'rgba(35, 150, 102, 1)',
+	            pointHoverBackgroundColor: 'rgba(35, 150, 102, 1)',
 	        }]
 	    },
 	    options: {
@@ -126,23 +136,59 @@ function sendRequest(){
 
 	//Send the proper header information along with the request
 	http.setRequestHeader("Content-type", "application/json");
+
+	removeProgress();
+	initializeProgress();
+
 	message = document.getElementById("message");
 	message.innerText = "Simulating packets";
 	var loadingDots = document.getElementById("loading-dots");
 	loadingDots.style.display = "inline";
 	container = document.getElementById("results-container");
 	container.style.display = "none";
-	http.onreadystatechange = function() {//Call a function when the state changes.
-	    if(http.readyState == 4 && http.status == 200) {
-	    	response = JSON.parse(http.response);
-	    	console.log(response);
-	    	loadingDots.style.display = "none";
-	    	message.innerHTML = "";
-	    	populateBoxes(response);
-	        makeChart(response);
-	    }
-	}
+	var button = document.getElementById("simulate-button");
+	button.style.display = "none";
+	// http.onreadystatechange = function() {//Call a function when the state changes.
+	//     if(http.readyState == 4 && http.status == 200) {
+	    	
+	//     }
+	// }
 	http.send(params);
+	var position = 1;
+
+	var totalLength = -1;
+
+	function handleNewData() {
+	    // the response text include the entire response so far
+	    // split the messages, then take the messages that haven't been handled yet
+	    // position tracks how many messages have been handled
+	    // messages end with a newline, so split will always show one extra empty message at the end
+	    var messages = http.responseText.split('\n');
+	    if (totalLength == -1 && messages.length > 0 && messages[0] != "") {
+	    	var info = JSON.parse(messages[0]);
+	    	totalLength = info['length'];
+	    }
+	    messages.slice(position, -1).forEach(function(value) {
+	    	addToProgress(JSON.parse(value), totalLength);
+	    });
+	    position = Math.max(messages.length - 1, 1);
+	}
+
+	var timer;
+    timer = setInterval(function() {
+    	handleNewData();
+        if (http.readyState == XMLHttpRequest.DONE) {
+            clearInterval(timer);
+            var responses = http.responseText.split('\n');
+
+            response = JSON.parse(responses[responses.length - 1]);
+        	loadingDots.style.display = "none";
+        	message.innerHTML = "";
+        	button.style.display = "inline-block";
+        	populateBoxes(response);
+            makeChart(response);
+        }
+    }, 300);
 }
 
 function updateDes(){
@@ -156,11 +202,38 @@ function updateDes(){
 
 }
 
+
 function clearDes(){
 	var modelDes = document.getElementById('model-des');
 	var dataDes = document.getElementById('dataset-des');
 	modelDes.innerText = "";
 	dataDes.innerText = "";
+}
+
+function addToProgress(update, totalLength){
+	var wrapper = document.getElementById('bar-wrapper');
+	var node = document.createElement("div");
+	if (update["label"] == update["output"]){
+		node.className = "progress-bar progress-bar-success";
+	} else if (update['label'] == 0 && update['output'] == 1) {
+		node.className = "progress-bar progress-bar-warning";
+	} else {
+		node.className = "progress-bar progress-bar-danger";
+	}
+	node.style.width = 100.0 / totalLength + "%";
+	wrapper.appendChild(node);
+}
+
+function removeProgress(){
+	var wrapper = document.getElementById('bar-wrapper');
+	while (wrapper.firstChild) {
+	    wrapper.removeChild(wrapper.firstChild);
+	}	
+}
+
+function initializeProgress(){
+	var section = document.getElementById('progress-section');
+	section.style.display = "block";
 }
 
 

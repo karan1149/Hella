@@ -1,7 +1,8 @@
 {
-	"isolation_forest_basic.pkl": "IsolationForest with basic featurization.",
-	"isolation_forest_count-based.pkl": "IsolationForest with count-based featurization.",
-	"isolation_forest_time-based.pkl": "IsolationForest with time-based featurization.",
-	"python3_isolation_forest.pkl": "IsolationForest for Python3",
-	"python3_scapy_24_isolation_forest.pkl": "IF 24"
+	"isolation_forest_basic.pkl": "IsolationForest with basic featurization. Trained on 5M packets from DARPA.",
+	"isolation_forest_count-based.pkl": "IsolationForest with count-based featurization. Trained on 5M packets from DARPA.",
+	"isolation_forest_time-based.pkl": "IsolationForest with time-based featurization. Trained on 5M packets from DARPA.",
+	"isolation_forest_basic_80k.pkl": "IsolationForest with basic featurization. Trained on API-simulated dataset.",
+	"isolation_forest_count-based_80k.pkl": "IsolationForest with count-based featurization. Trained on API-simulated dataset.",
+	"isolation_forest_time-based_80k.pkl": "IsolationForest with time-based featurization. Trained on API-simulated dataset."
 }
