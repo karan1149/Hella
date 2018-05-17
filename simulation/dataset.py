@@ -2,10 +2,11 @@ import json
 import argparse
 import csv
 import datetime
+import time as time_module
 import collections
 import pickle
 
-from numpy import random
+from numpy import random, log
 
 import api
 
@@ -113,6 +114,8 @@ class DataGenerator():
 		init_datetime = datetime.datetime.fromtimestamp(self.data_points[0][0])
 		seconds_passed = init_datetime.minute * 60 + init_datetime.second
 
+		all_packets = []
+
 		for time, lat, lon in self.data_points:
 			now_datetime = datetime.datetime.fromtimestamp(time)
 
@@ -169,11 +172,22 @@ class DataGenerator():
 			if do_check_updates:
 				self.api.perform_get(api.GET_UPDATE_INFO)
 
-		raw_packets = self.api.drain_pkts()
-		self.dataset = raw_packets
-		self.save_dataset(raw_packets)
+			raw_packets = self.api.drain_pkts()
+			self.transfer_timestamps(time, raw_packets)
+			all_packets.extend(raw_packets)
 
-		return raw_packets
+			time_module.sleep(0.05)
+		
+		self.dataset = all_packets
+		self.save_dataset(all_packets)
+
+		return all_packets
+
+	def transfer_timestamps(self, real_time, packets):
+		start_time = packets[0].time
+		for packet in packets:
+			time_delta = packet.time - start_time
+			packet.time = real_time + time_delta		
 
 	def save_dataset(self, raw_packets):
 		pickle.dump(raw_packets, open(self.out_file, 'wb'))  
