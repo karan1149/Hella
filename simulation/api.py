@@ -16,12 +16,12 @@ GET_UPDATE_FUNC = lambda id_: API_BASE + 'car/update?id=%s&key=%s' % (id_, API_K
 UPDATE_ID = '7d93e61d-2dd2-4829-ac94-4a6c5edc52d3'
 GET_UPDATE = GET_UPDATE_FUNC(UPDATE_ID)
 
-GOOGLE_KEY = '0279615b-5cb4-4070-abd9-4b9909aca6af'
-
-GET_LOCATION_INFO_FN = lambda lat, lon: API_BASE + 'car/location/info?latlng=%s,%s&key=%s' % (lat, lon, GOOGLE_KEY)
-GET_LOCATION_NEARBY_FN = lambda lat, lon: API_BASE + 'car/location/nearby?latlng=%s,%s&key=%s' % (lat, lon, GOOGLE_KEY)
-GET_PLACE_DETAILS_FN = lambda place_id: API_BASE + 'car/place/details?place_id=%s&key=%s' % (place_id, GOOGLE_KEY)
-GET_LOCATION_ELEVATION_FN = lambda lat, lon: API_BASE + 'car/location/elevation?latlng=%s,%s&key=%s' % (lat, lon, GOOGLE_KEY)
+GET_LOCATION_INFO_FN = lambda lat, lon: API_BASE + 'car/location/info?latlng=%s,%s&key=%s' % (lat, lon, API_KEY)
+GET_LOCATION_NEARBY_FN = lambda lat, lon: API_BASE + 'car/location/nearby?latlng=%s,%s&key=%s' % (lat, lon, API_KEY)
+GET_PLACE_DETAILS_FN = lambda place_id: API_BASE + 'car/place/details?place_id=%s&key=%s' % (place_id, API_KEY)
+GET_LOCATION_ELEVATION_FN = lambda lat, lon: API_BASE + 'car/location/elevation?latlng=%s,%s&key=%s' % (lat, lon, API_KEY)
+GET_LOCATION_WEATHER_FN = lambda lat, lon: API_BASE + 'car/location/weather?latlng=%s,%s&key=%s' % (lat, lon, API_KEY)
+GET_NEWS_HEADLINES_FN = API_BASE + 'car/news/headlines?key=%s' % (API_KEY)
 
 GOOGLE_LOCATION_FUNCS = [
     GET_LOCATION_INFO_FN,
