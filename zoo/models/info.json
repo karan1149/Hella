@@ -1,8 +1,3 @@
 {
-	"isolation_forest_basic.pkl": "IsolationForest with basic featurization. Trained on 5M packets from DARPA.",
-	"isolation_forest_count-based.pkl": "IsolationForest with count-based featurization. Trained on 5M packets from DARPA.",
-	"isolation_forest_time-based.pkl": "IsolationForest with time-based featurization. Trained on 5M packets from DARPA.",
-	"isolation_forest_basic_80k.pkl": "IsolationForest with basic featurization. Trained on API-simulated dataset.",
-	"isolation_forest_count-based_80k.pkl": "IsolationForest with count-based featurization. Trained on API-simulated dataset.",
-	"isolation_forest_time-based_80k.pkl": "IsolationForest with time-based featurization. Trained on API-simulated dataset."
+	"isolation_forest_countbased_trainct80k.pkl": "IsolationForest with count-based featurization. Trained on old-API-simulated dataset."
 }

@@ -1,11 +1,11 @@
 import flask
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, Response
 import os
 import sys
 sys.path.append("./ml")
 from anomaly_model import AnomalyModel
 sys.path.append("./monitor")
-import test_data
+from test_data import *
 import pickle
 from scapy.all import *
 import json
@@ -16,13 +16,14 @@ model_dir = 'zoo/models/'
 from zoo import app
 
 feat_module = __import__('featurizer')
-with open(dataset_dir + "info.json", 'r') as d:
-  with open(model_dir + "info.json", 'r') as m:
-    datasets_info = json.load(d)
-    models_info = json.load(m)
+
 
 @app.route('/')
 def index():
+  with open(dataset_dir + "info.json", 'r') as d:
+    with open(model_dir + "info.json", 'r') as m:
+      datasets_info = json.load(d)
+      models_info = json.load(m)
   # Take all files in the appropriate directories matching ".pkl"
   try:
     dataset_names = [(make_name_pretty(name), name, datasets_info[name]) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
@@ -34,6 +35,12 @@ def index():
 @app.route('/predict', methods=['POST'])
 def predict():
   params = request.get_json(silent=True, force=True)
+  
+
+  return Response(generate_predictions(params), mimetype='text/plain')
+
+
+def generate_predictions(params):
   print(params)
   model_path = model_dir + params['model']
   dataset_path = dataset_dir + params['dataset']
@@ -46,15 +53,25 @@ def predict():
 
   fr = getattr(feat_module, model.featurizer)()
 
-  X = [fr.featurize(Ether(dp.pkt[1])) for dp in test_data.dps]
-  print(len(X))
+  X = [fr.featurize(dp.pkt) for dp in test_data.dps]
+  print(len(X), " examples")
   Y = [1 if dp.malicious else 0 for dp in test_data.dps]
   num_packets = len(Y)
 
   start = time.time()
-  pred = model.predicts(X)
-  diff = time.time() - start
+  preds = []
+  
+  yield json.dumps({"length": len(X)})
+  for i, pkt in enumerate(X):
+    pred = model.predict(pkt)
+    update = {}
+    update['label'] = Y[i]
+    update['output'] = pred
+    yield "\n" + json.dumps(update)
+    preds.append(pred)
 
+  diff = time.time() - start
+  
   start_roc = time.time()
   fpr, tpr, roc_auc = model.roc_points(X, Y)
   diff_roc = time.time() - start_roc
@@ -63,17 +80,16 @@ def predict():
   points = zip(fpr, tpr)
   points = [{'x': point[0], 'y': point[1]} for point in points]
 
-  metrics = model.validation(pred, Y)
-
+  metrics = model.validation(preds, Y)
+  
   info = {}
   info['metrics'] = metrics
   info['roc_auc'] = roc_auc
   info['points'] = points
   info['time'] = diff * 1.0 / num_packets
   info['time_total'] = diff
-  print(info)
 
-  return jsonify(info)
+  yield "\n" + json.dumps(info)
 
 # Take a model/dataset name and "prettify" it
 # by replacing underscores with spaces and using titlecase
