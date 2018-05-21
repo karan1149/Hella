@@ -19,6 +19,7 @@ class AnomalyModel(object):
     Predicts whether the given packet is anomalous.
     Dimensionality of packet is (n_features), 0 if inlier, 1 if anomaly
     """
+    print(packet, len(packet))
     pred = self.model.predict([packet])[0]
     return 1 if pred == -1 else 0
 
