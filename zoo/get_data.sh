@@ -22,13 +22,13 @@ fi
 # with their unique Google Drive ID.
 
 # Data
-api_old_packets_ct79400="1G5h-OH_x9tSp932snjrhMWRT9b87DqN1"
+api_old_packets_500_count="1PHkENtFJFWZ7fwt16VtRDF5tuQqm8Iz9"
 
 # Models
-isolation_forest_countbased_trainct80k="1LbJv9CxcYTMQOKoSpXre8xm9GP-IdHlI"
+isolation_forest_countbased_trainct80k="1Dqn2VOMC44LB-JsU55qCol3ZokF78COm"
 
 to_download_models=(isolation_forest_countbased_trainct80k)
-to_download_data=(api_old_packets_ct79400)
+to_download_data=(api_old_packets_500_count)
 
 # TODO: make this logic nicer.
 for i in {0..0}
