@@ -64,7 +64,7 @@ class BasicFeaturizerUDP(object):
         to a range of values beginning at 0
         """
 
-        return Enum('Features', { feat : i for i, feat in enumerate(['time', 'is_tcp'] + IP_HEADER + TCP_HEADER) })
+        return Enum('Features', { feat : i for i, feat in enumerate(['time', 'is_tcp', 'is_ip'] + IP_HEADER + TCP_HEADER) })
 
     def featurize(self, raw_pkt, timestamp=None):
         """
@@ -81,11 +81,15 @@ class BasicFeaturizerUDP(object):
             features[self.BasicFeatures['time'].value] = raw_pkt.time
 
         features[self.BasicFeatures['is_tcp'].value] = 1 if TCP in raw_pkt else 0
+        features[self.BasicFeatures['is_ip'].value] = 1 if IP in raw_pkt else 0
 
-        assert(IP in raw_pkt)
+
 
         for feat in IP_HEADER:
-            features[self.BasicFeatures[feat].value] = getattr(raw_pkt[IP], feat)        
+            if IP in raw_pkt:
+                features[self.BasicFeatures[feat].value] = getattr(raw_pkt[IP], feat)
+            else:
+                features[self.BasicFeatures[feat].value] = 0    
 
         for feat in TCP_HEADER:
             if TCP in raw_pkt:
@@ -244,15 +248,22 @@ if __name__ == '__main__':
     while True:
         pkt_read = reader.__next__()
         raw_pkt = Ether(pkt_read[1])
+        cur_len = -1
         if IP in raw_pkt:
             feats = BFU.featurize(raw_pkt)
+            assert(cur_len == -1 or cur_len == len(feats))
+            cur_len = len(feats)
+            assert(feats[2] == 1)
             if UDP in raw_pkt:
                 assert(feats[1] == 0)
             elif TCP in raw_pkt:
                 assert(feats[1] == 1)
             else:
-                assert(feats[1] == 0)
-            pkts_read += 1
+                assert(feats[1] == 0)          
+        else: 
+            feats = BFU.featurize(raw_pkt)
+            assert(feats[2] == 0)
+        pkts_read += 1 
         if pkts_read > 10000:
             break
 
