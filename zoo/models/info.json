@@ -1,3 +1,3 @@
 {
-	"isolation_forest_countbased_trainct80k.pkl": "IsolationForest with count-based featurization. Trained on old-API-simulated dataset.",
+	"isolation_forest_countbased_trainct80k.pkl": "IsolationForest with count-based featurization. Trained on old-API-simulated dataset."
 }
