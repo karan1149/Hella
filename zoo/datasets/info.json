@@ -1,6 +1,3 @@
 {
-	"darpa_1000.pkl": "1000 packet dataset from DARPA. 500 packets are normal network traffic, and the other 500 include attacks.",
-	"darpa_400.pkl": "400 packet dataset from DARPA. 200 packets are normal network traffic, and the other 200 include attacks.",
-	"darpa_400_py3.pkl": "Py3: 400 packet dataset from DARPA. 200 packets are normal network traffic, and the other 200 include attacks.",
-	"API_1k.pkl": "API dataset with 1k packets."
+	"api_old_packets_ct79400.pkl": "Old-API-generated dataset with ~79k packets."
 }
