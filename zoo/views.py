@@ -5,7 +5,7 @@ import sys
 sys.path.append("./ml")
 from anomaly_model import AnomalyModel
 sys.path.append("./monitor")
-import test_data
+from test_data import *
 import pickle
 from scapy.all import *
 import json
@@ -16,16 +16,20 @@ model_dir = 'zoo/models/'
 from zoo import app
 
 feat_module = __import__('featurizer')
-with open(dataset_dir + "info.json", 'r') as d:
-  with open(model_dir + "info.json", 'r') as m:
-    datasets_info = json.load(d)
-    models_info = json.load(m)
+
 
 @app.route('/')
 def index():
+  with open(dataset_dir + "info.json", 'r') as d:
+    with open(model_dir + "info.json", 'r') as m:
+      datasets_info = json.load(d)
+      models_info = json.load(m)
   # Take all files in the appropriate directories matching ".pkl"
-  dataset_names = [(make_name_pretty(name), name, datasets_info[name]) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
-  model_names = [(make_name_pretty(name), name, models_info[name]) for name in os.listdir(model_dir) if name.endswith('.pkl')]
+  try:
+    dataset_names = [(make_name_pretty(name), name, datasets_info[name]) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
+    model_names = [(make_name_pretty(name), name, models_info[name]) for name in os.listdir(model_dir) if name.endswith('.pkl')]
+  except KeyError as e:
+    raise KeyError(str(e) + " could not be found in info.json. Append this name to info.json to fix this error.")
   return render_template('index.html', dataset_names=dataset_names, model_names=model_names)
 
 @app.route('/predict', methods=['POST'])
@@ -49,8 +53,8 @@ def generate_predictions(params):
 
   fr = getattr(feat_module, model.featurizer)()
 
-  X = [fr.featurize(Ether(dp.pkt[1])) for dp in test_data.dps]
-  print(len(X))
+  X = [fr.featurize(dp.pkt) for dp in test_data.dps]
+  print(len(X), " examples")
   Y = [1 if dp.malicious else 0 for dp in test_data.dps]
   num_packets = len(Y)
 
@@ -58,7 +62,6 @@ def generate_predictions(params):
   preds = []
   
   yield json.dumps({"length": len(X)})
-
   for i, pkt in enumerate(X):
     pred = model.predict(pkt)
     update = {}
