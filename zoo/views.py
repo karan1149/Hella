@@ -24,8 +24,11 @@ with open(dataset_dir + "info.json", 'r') as d:
 @app.route('/')
 def index():
   # Take all files in the appropriate directories matching ".pkl"
-  dataset_names = [(make_name_pretty(name), name, datasets_info[name]) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
-  model_names = [(make_name_pretty(name), name, models_info[name]) for name in os.listdir(model_dir) if name.endswith('.pkl')]
+  try:
+    dataset_names = [(make_name_pretty(name), name, datasets_info[name]) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
+    model_names = [(make_name_pretty(name), name, models_info[name]) for name in os.listdir(model_dir) if name.endswith('.pkl')]
+  except KeyError as e:
+    raise KeyError(str(e) + " could not be found in info.json. Append this name to info.json to fix this error.")
   return render_template('index.html', dataset_names=dataset_names, model_names=model_names)
 
 @app.route('/predict', methods=['POST'])
