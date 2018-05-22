@@ -61,7 +61,7 @@ class DataGenerator():
 			per_minute = len(time_buckets[time_key])
 			seconds_per = 60 // per_minute
 
-			for dp_i, data_point in enumerate(time_buckets[time]):
+			for dp_i, data_point in enumerate(time_buckets[time_key]):
 				time, lat, lon = data_point
 				granular_asset.append((time + dp_i * seconds_per, lat, lon))
 
@@ -199,10 +199,6 @@ if __name__ == '__main__':
 
 	parser.add_argument('asset_file', help='the asset file path')
 	parser.add_argument('out_file', help='the packet data path')
-
-	train_test = parser.add_mutually_exclusive_group(required=True)
-	train_test.add_argument('--train', action='store_true', default=False)
-	train_test.add_argument('--test', action='store_true', default=False)
 
 	args = parser.parse_args()
 	
