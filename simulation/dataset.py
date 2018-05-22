@@ -12,11 +12,9 @@ import api
 
 class DataGenerator():
 
-	def __init__(self, asset_file, out_file, train, test):
+	def __init__(self, asset_file, out_file):
 		self.asset_file = asset_file
 		self.out_file = out_file
-		self.train = train
-		self.test = test
 
 		raw_asset = self.read_asset_file(self.asset_file)
 		self.data_points = self.process_asset(raw_asset)
@@ -202,5 +200,5 @@ if __name__ == '__main__':
 
 	args = parser.parse_args()
 	
-	data_generator = DataGenerator(args.asset_file, args.out_file, args.train, args.test)
+	data_generator = DataGenerator(args.asset_file, args.out_file)
 	data_generator.build_dataset()
