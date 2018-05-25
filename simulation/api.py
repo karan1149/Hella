@@ -45,7 +45,6 @@ class API():
         return pkts
 
     def perform_get(self, query):
-        print('Performing GET...')
 
         # sniff traffic from the get on a thread
         capture_thread = Thread(target=self.capture_pkts)

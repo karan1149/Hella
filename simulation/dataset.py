@@ -5,8 +5,11 @@ import datetime
 import time as time_module
 import collections
 import pickle
+import socket
 
 from numpy import random, log
+from tqdm import tqdm
+from collections import defaultdict
 
 import api
 
@@ -113,8 +116,9 @@ class DataGenerator():
 		seconds_passed = init_datetime.minute * 60 + init_datetime.second
 
 		all_packets = []
+		request_counts = defaultdict(int)
 
-		for time, lat, lon in self.data_points:
+		for time, lat, lon in tqdm(self.data_points):
 			now_datetime = datetime.datetime.fromtimestamp(time)
 
 			is_weekday = now_datetime.weekday() < 5
@@ -134,11 +138,11 @@ class DataGenerator():
 						   )
 
 			do_location	 = seconds_passed % self.config['location_info']['frequency'] == 0 and \
-						   random.binomial(1, self.config['elevation']['prob']) == 1
+						   random.binomial(1, self.config['location_info']['prob']) == 1
 
 
 			do_weather	 = seconds_passed % self.config['weather']['frequency'] == 0 and \
-						   random.binomial(1, self.config['elevation']['prob']) == 1
+						   random.binomial(1, self.config['weather']['prob']) == 1
 
 
 			do_news		 = seconds_passed % self.config['news']['frequency'] == 0 and \
@@ -155,40 +159,57 @@ class DataGenerator():
 			do_check_updates 	 = seconds_passed % self.config['check_updates']['frequency'] == 0 and \
 						   		   random.binomial(1, self.config['check_updates']['prob']) == 1
 
-			if do_elevation: 
-				self.api.perform_get(api.GET_LOCATION_ELEVATION_FN(lat, lon))
-			if do_places: 
-				self.api.perform_get(api.GET_LOCATION_NEARBY_FN(lat, lon))
-			if do_location: 
-				self.api.perform_get(api.GET_LOCATION_INFO_FN(lat, lon))
-			if do_weather: 
-				self.api.perform_get(api.GET_LOCATION_WEATHER_FN(lat, lon))
-			if do_news: 
-				self.api.perform_get(api.GET_NEWS_HEADLINES_FN)
-			if do_update:
-				self.api.perform_get(api.GET_LATEST_UPDATE)
-			if do_check_updates:
-				self.api.perform_get(api.GET_UPDATE_INFO)
+			try:
+				if do_elevation:
+					self.api.perform_get(api.GET_LOCATION_ELEVATION_FN(lat, lon))
+				if do_places: 
+					self.api.perform_get(api.GET_LOCATION_NEARBY_FN(lat, lon))
+				if do_location: 
+					self.api.perform_get(api.GET_LOCATION_INFO_FN(lat, lon))
+				if do_weather: 
+					self.api.perform_get(api.GET_LOCATION_WEATHER_FN(lat, lon))
+				if do_news: 
+					self.api.perform_get(api.GET_NEWS_HEADLINES_FN)
+				if do_update:
+					self.api.perform_get(api.GET_LATEST_UPDATE)
+				if do_check_updates:
+					self.api.perform_get(api.GET_UPDATE_INFO)
+			except socket.timeout:
+				print("Exception: socket timed out. skipping request batch.")
+				continue
+
+			request_counts['elevation'] += int(do_elevation)
+			request_counts['places_nearby'] += int(do_places)
+			request_counts['location_info'] += int(do_location)
+			request_counts['weather'] += int(do_weather)
+			request_counts['news'] += int(do_news)
+			request_counts['update'] += int(do_update)
+			request_counts['check_updates'] += int(do_check_updates)
 
 			raw_packets = self.api.drain_pkts()
 			self.transfer_timestamps(time, raw_packets)
 			all_packets.extend(raw_packets)
 
+			seconds_passed += 1
 			time_module.sleep(0.05)
 		
 		self.dataset = all_packets
-		self.save_dataset(all_packets)
+		self.save_dataset(all_packets, request_counts)
 
 		return all_packets
 
 	def transfer_timestamps(self, real_time, packets):
+		if len(packets) == 0: return
 		start_time = packets[0].time
 		for packet in packets:
 			time_delta = packet.time - start_time
 			packet.time = real_time + time_delta		
 
-	def save_dataset(self, raw_packets):
-		pickle.dump(raw_packets, open(self.out_file, 'wb'))  
+	def save_dataset(self, raw_packets, request_counts):
+		pickle.dump(raw_packets, open(self.out_file, 'wb'))
+		print('REQUEST COUNT STATISTICS')
+		for key in request_counts:
+			print('{}: {}'.format(key, request_counts[key]))
 
 
 if __name__ == '__main__':
