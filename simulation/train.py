@@ -1,10 +1,10 @@
 import sys, os
 sys.path.append(os.path.expandvars('../ml'))
-from featurizer import BasicFeaturizer, CountBasedFeaturizer, TimeBasedFeaturizer
+from featurizer import BasicFeaturizer, CountBasedFeaturizer, TimeBasedFeaturizer, BasicFeaturizerUDP
 import argparse
 from simulate import Simulator
 
-featurizer_classes = { 1: BasicFeaturizer, 2: CountBasedFeaturizer, 3: TimeBasedFeaturizer}
+featurizer_classes = { 1: BasicFeaturizer, 2: CountBasedFeaturizer, 3: TimeBasedFeaturizer, 4: BasicFeaturizerUDP}
 
 # https://mail.python.org/pipermail/tutor/2013-January/093635.html
 def featurizer_range(arg):
@@ -13,11 +13,11 @@ def featurizer_range(arg):
     except ValueError as err:
        raise argparse.ArgumentTypeError(str(err))
 
-    if value < 1 or value > 3:
-        message = "Expected 1 <= value <= 3, got value = {}".format(value)
+    if value < 1 or value > 4:
+        message = "Expected 1 <= value <= 4, got value = {}".format(value)
         raise argparse.ArgumentTypeError(message)
 
-    return value    
+    return value
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

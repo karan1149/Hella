@@ -5,12 +5,12 @@ sys.path.append(os.path.expandvars('../ml'))
 sys.path.append(os.path.expandvars('../monitor'))
 from monitor import Monitor
 from method import Method
-from featurizer import BasicFeaturizer, CountBasedFeaturizer, TimeBasedFeaturizer
+from featurizer import BasicFeaturizer, CountBasedFeaturizer, TimeBasedFeaturizer, BasicFeaturizerUDP
 import api
 import argparse
 from scapy.all import *
 
-featurizer_classes = { 1: BasicFeaturizer, 2: CountBasedFeaturizer, 3: TimeBasedFeaturizer}
+featurizer_classes = { 1: BasicFeaturizer, 2: CountBasedFeaturizer, 3: TimeBasedFeaturizer, 4: BasicFeaturizerUDP}
 
 class Simulator():
 
