@@ -15,9 +15,9 @@ import api
 
 class DataGenerator():
 
-	def __init__(self, asset_file, out_file):
+	def __init__(self, asset_file, data_file):
 		self.asset_file = asset_file
-		self.out_file = out_file
+		self.data_file = data_file
 
 		raw_asset = self.read_asset_file(self.asset_file)
 		self.data_points = self.process_asset(raw_asset)
@@ -206,7 +206,7 @@ class DataGenerator():
 			packet.time = real_time + time_delta		
 
 	def save_dataset(self, raw_packets, request_counts):
-		pickle.dump(raw_packets, open(self.out_file, 'wb'))
+		pickle.dump(raw_packets, open(self.data_file, 'wb'))
 		print('REQUEST COUNT STATISTICS')
 		for key in request_counts:
 			print('{}: {}'.format(key, request_counts[key]))
@@ -216,10 +216,10 @@ if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument('asset_file', help='the asset file path')
-	parser.add_argument('out_file', help='the packet data path')
+	parser.add_argument('--asset_file', help='The file path for the desired asset file.', required=True)
+	parser.add_argument('--data_file', help='The destination packet data path, ending in .pkl.', required=True)
 
 	args = parser.parse_args()
 	
-	data_generator = DataGenerator(args.asset_file, args.out_file)
+	data_generator = DataGenerator(args.asset_file, args.data_file)
 	data_generator.build_dataset()

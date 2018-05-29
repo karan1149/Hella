@@ -1,27 +1,33 @@
-## Demo Day Simulation
+## Packet Simulation and Data Generation
 
-Download data from (here)[https://www.ll.mit.edu/ideval/data/1999/training/week2/index.html] as required (use outside.tcpdump for each day). We use week1_monday.tcpdump, week1_tuesday.tcpdump, week1_wednesday.tcpdump, week1_thursday.tcpdump, week1_friday.tcpdump, and week2_thursday.tcpdump, all put in the /ml/data directory.
+This folder contains scripts that run the SeeR system on three different tasks: training dataset creation, model training, and test dataset creation. 
 
-To run, navigate to /ml, activate your virtualenv, and run:
+### Train Dataset Creation
 
-```
-python ../simulation/simulate.py
-```
+To train a dataset, you first need to download lat/long assets, which the dataset creation script uses to generate training data that resembles realistic car network traffic. 
 
-## Breakathon
+To download these assets, run:
 
-Download asset data from (here)[https://drive.google.com/file/d/1vQlPmA8RF3WMP40IANaX7AoAhfktQv4L/view?usp=sharing]. Unzip the file and place its contents (mnultiple files not a singular folder) in ./simulation/assets.
+```sh get_assets.sh```
 
-Steps:
-1. Create two datasets (train and test) from two separate assets (.csv files) using the create_dataset.py command line interface. Save them as .pkl files.
-2. Train a model on the train dataset and save it to ./simulation/models using the simulate.py command line interface. Save it as a .pkl file.
-3. Test a model on the test dataset using the simulate.py command line interface.
-4. Rinse. Repeat.
+This will create an `assets` folder in the current directory containing the required asset files.
 
-To run, navigate to /simulation, activate your virtualenv, and run:
+To actually create a dataset, use the `dataset.py` script.
 
-```
-sudo python3 ../simulation/simulate.py -h
-```
+```sudo python dataset.py --asset_file assets/asset107.csv --data_file my_output_training_dataset.pkl```
 
-*sudo and python3 are required by scapy
+Note that sudo is required for Scapy. The `asset_file` can be any file in the assets directory downloaded by the above script, where smaller asset files will generally produce smaller datasets. The `data_file` is the output `.pkl` file. After the script is complete, the `.pkl` file will contain an array of Scapy packets resembling realistic car network traffic. You can use the `-h` flag with this script at any point to get help.
+
+Note that you may encounter occasional timeouts while this script runs, which should not cause any problems.
+
+### Model Training
+
+Once a training dataset has been created, you can train the model using the `train.py` script. 
+
+```sudo python train.py --data_file my_output_training_dataset.pkl --model_file my_output_model.pkl```
+
+The `data_file` is the `.pkl` file containing a training dataset, generated as the output of the previous step. The `model_file` is the filepath for the output model, which should also be a `.pkl` file. You can use the `-h` flag with this script at any point to get help.
+
+### Test Dataset Creation
+
+Incomplete. For now, you can convert a training set into a test set using the `train_to_test_random.py` script. 
