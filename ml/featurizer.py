@@ -13,46 +13,8 @@ TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'window']
 
 UDP_HEADER = ['sport', 'dport']
 
+
 class BasicFeaturizer(object):
-
-    def __init__(self):
-
-        self.BasicFeatures = self._feature_enum()
-
-    def _feature_enum(self):
-        """
-        Returns an Enum mapping 'time' and all features in IP_HEADER and TCP_HEADER
-        to a range of values beginning at 0
-        """
-
-        return Enum('Features', { feat : i for i, feat in enumerate(['time'] + IP_HEADER + TCP_HEADER) })
-
-    def featurize(self, raw_pkt, timestamp=None):
-        """
-        Returns a list of basic features as defined by the BasicFeatures enum
-        raw_pkt: The scapy Packet_metaclass instance to be converted
-        timestamp: the artificial timestamp (useful for preexisting, converted packets)
-        """
-
-        features = [None for i in self.BasicFeatures]
-
-        if timestamp:
-            features[self.BasicFeatures['time'].value] = timestamp
-        else:
-            features[self.BasicFeatures['time'].value] = raw_pkt.time
-
-        if IP in raw_pkt:
-            for feat in IP_HEADER:
-                features[self.BasicFeatures[feat].value] = getattr(raw_pkt[IP], feat)
-
-        if TCP in raw_pkt:
-            for feat in TCP_HEADER:
-                features[self.BasicFeatures[feat].value] = getattr(raw_pkt[TCP], feat)
-
-        return features
-
-
-class BasicFeaturizerUDP(object):
 
     def __init__(self):
 
@@ -214,56 +176,3 @@ class TimeBasedFeaturizer(BasicFeaturizer):
         pkt.extend([self.feature_stats[self.BasicFeatures(i)][pkt[i]] for i in range(len(pkt))])
 
         return pkt
-
-if __name__ == '__main__':
-    reader = read_tcpdump_file('data/week1_friday.tcpdump')
-
-    print('Test CountBasedFeaturizer')
-    CBF = CountBasedFeaturizer(50)
-    pkts_read = 0
-    while True:
-        pkt_read = reader.__next__()
-        raw_pkt = Ether(pkt_read[1])
-        if IP in raw_pkt and TCP in raw_pkt:
-            feats = CBF.featurize(raw_pkt)
-            pkts_read += 1
-        if pkts_read > CBF.pkt_window * 2:
-            break
-
-    print('Test TimeBasedFeaturizer')
-    TBF = TimeBasedFeaturizer(1)
-    start = time.time()
-    while True:
-        pkt_read = reader.__next__()
-        raw_pkt = Ether(pkt_read[1])
-        if IP in raw_pkt and TCP in raw_pkt:
-            feats = TBF.featurize(raw_pkt)
-        if time.time() - start > TBF.sec_window * 2:
-            break
-
-    print("Test BasicFeaturizerUDP")
-    BFU = BasicFeaturizerUDP()
-
-    pkts_read = 0
-    while True:
-        pkt_read = reader.__next__()
-        raw_pkt = Ether(pkt_read[1])
-        cur_len = -1
-        if IP in raw_pkt:
-            feats = BFU.featurize(raw_pkt)
-            assert(cur_len == -1 or cur_len == len(feats))
-            cur_len = len(feats)
-            assert(feats[2] == 1)
-            if UDP in raw_pkt:
-                assert(feats[1] == 0)
-            elif TCP in raw_pkt:
-                assert(feats[1] == 1)
-            else:
-                assert(feats[1] == 0)          
-        else: 
-            feats = BFU.featurize(raw_pkt)
-            assert(feats[2] == 0)
-        pkts_read += 1 
-        if pkts_read > 10000:
-            break
-
