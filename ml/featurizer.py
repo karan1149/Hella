@@ -1,6 +1,6 @@
 from collections import deque, defaultdict
 from enum import Enum, unique
-
+import scapy
 from scapy.all import *
 from utils import *
 
