@@ -5,16 +5,16 @@
 # model zoo.
 #
 # NOTE: all data loaded is assumed to have been pickled
-#       using Python 3.
+#       using Python 2.
 #
 
 
-# Ensure that we are running with python3
-version="$(python --version)"
-version=($version)
-if  [[ ${version[1]} != 3* ]];
+# Ensure that we are running with python2
+ispy2=`python -c 'import sys; print sys.version_info > (2, 7) and sys.version_info < (3, 0)'`
+if [ $ispy2 != "True" ];
 then
-    echo "You should be running with Python 3."
+    echo $ispy2
+    echo "You should be running with Python 2."
     exit
 fi
 
