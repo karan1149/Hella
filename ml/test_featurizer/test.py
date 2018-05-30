@@ -11,14 +11,9 @@ def test_CBF(packets):
     CBF = CountBasedFeaturizer(50)
     pkts_read = 0
     for packet in packets:
-        
-
-    while True:
-        pkt_read = reader.__next__()
-        raw_pkt = Ether(pkt_read[1])
-        if IP in raw_pkt and TCP in raw_pkt:
-            feats = CBF.featurize(raw_pkt)
-            pkts_read += 1
+        raw_pkt = Ether(packet)
+        feats = CBF.featurize(raw_pkt)
+        pkts_read += 1
         if pkts_read > CBF.pkt_window * 2:
             break
 
@@ -26,22 +21,19 @@ def test_TBF(packets):
     print('Test TimeBasedFeaturizer')
     TBF = TimeBasedFeaturizer(1)
     start = time.time()
-    while True:
-        pkt_read = reader.__next__()
-        raw_pkt = Ether(pkt_read[1])
-        if IP in raw_pkt and TCP in raw_pkt:
-            feats = TBF.featurize(raw_pkt)
+    for packet in packets:
+        raw_pkt = Ether(packet)
+        feats = TBF.featurize(raw_pkt)
         if time.time() - start > TBF.sec_window * 2:
             break
 
-def test_BF():
+def test_BF(packets):
     print("Test BasicFeaturizer")
     BF = BasicFeaturizer()
 
     pkts_read = 0
-    while True:
-        pkt_read = reader.__next__()
-        raw_pkt = Ether(pkt_read[1])
+    for packet in packets:
+        raw_pkt = Ether(packet)
         cur_len = -1
         if IP in raw_pkt:
             feats = BF.featurize(raw_pkt)
@@ -66,6 +58,8 @@ if __name__ == '__main__':
         packets = pickle.load(data_file)
     
     test_CBF(packets)
+    test_TBF(packets)
+    test_BF(packets)
 
 
 

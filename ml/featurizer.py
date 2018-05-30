@@ -7,10 +7,7 @@ from utils import *
 import time
 
 IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto']
-#TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'flags', 'window']
-# edited to remove flags for breakathon
 TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'window']
-
 UDP_HEADER = ['sport', 'dport']
 
 
@@ -44,8 +41,6 @@ class BasicFeaturizer(object):
 
         features[self.BasicFeatures['is_tcp'].value] = 1 if TCP in raw_pkt else 0
         features[self.BasicFeatures['is_ip'].value] = 1 if IP in raw_pkt else 0
-
-
 
         for feat in IP_HEADER:
             if IP in raw_pkt:
