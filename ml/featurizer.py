@@ -1,5 +1,4 @@
 from collections import deque, defaultdict
-from enum import Enum, unique
 
 from scapy.all import *
 from utils import *
@@ -9,7 +8,6 @@ import time
 IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto']
 TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'window']
 UDP_HEADER = ['sport', 'dport']
-
 
 class BasicFeaturizer(object):
 
