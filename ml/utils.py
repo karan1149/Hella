@@ -1,7 +1,6 @@
 from scapy.all import *
 import dpkt
 
-
 def read_tcpdump_file(tcpdump_file):
   """
   Reads the tcpdump file and returns a list of packets (bytes).
