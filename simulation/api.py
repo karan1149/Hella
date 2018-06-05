@@ -2,7 +2,7 @@
 
 from scapy.all import *
 from threading import Thread
-
+from future.builtins import bytes
 sys.path.append(os.path.expandvars('../monitor'))
 from test_data import Data_point, Test_data
 

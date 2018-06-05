@@ -33,8 +33,6 @@ Alan | Black | Python, systems design, systems security, some AI/deep learning |
 
 2. Slack: [cs210hella.slack.com](https://cs210hella.slack.com) (sign up [here](https://cs210hella.slack.com/signup)).
 
-3. OneNote for [documentation](https://1drv.ms/u/s!Avw6AAp_DwlViFTUTzrlhh6ODdQS).
+3. Documentation: [Github Wiki](https://github.com/cs210/Hella/wiki).
 
 4. [Google Calendar](https://calendar.google.com/calendar/embed?src=stanford.edu_rsg43to2epthvtkim72t0des9o%40group.calendar.google.com&ctz=America%2FLos_Angeles)
-
-5. [Asana](https://app.asana.com/0/536558338426742/calendar) for task management.
