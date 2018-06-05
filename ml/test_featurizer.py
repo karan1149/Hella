@@ -21,6 +21,8 @@ def test_CBF(packets):
         pkts_read += 1
         if pkts_read > CBF.pkt_window * 2:
             break    
+    for p in featurized_packets[:10]:
+        print p            
     print('done')                   
 
 def test_TBF(packets):
@@ -34,6 +36,8 @@ def test_TBF(packets):
         featurized_packets.append(feats)
         if time.time() - start > TBF.sec_window * 2:
             break
+    for p in featurized_packets[:10]:
+        print p
     print('done')            
 
 def test_BF(packets):
@@ -62,6 +66,8 @@ def test_BF(packets):
         pkts_read += 1
         if pkts_read > 10000:
             break
+    for p in featurized_packets[:10]:
+        print p            
     print('done')
 
 if __name__ == '__main__':
@@ -71,6 +77,6 @@ if __name__ == '__main__':
 
     with open(args.data_file, 'rb') as data_file:
         packets = pickle.load(data_file)
+    test_BF(packets)        
     test_CBF(packets)
     test_TBF(packets)
-    test_BF(packets)

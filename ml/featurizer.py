@@ -7,22 +7,31 @@ from enum import Enum
 import time
 
 IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto']
-TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'window']
+
+TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'flags', 'window']
+TCP_FLAGS = {i:val for i,val in enumerate(['FIN', 'SYN', 'RST', 'PSH', 'ACK', 'URG', 'ECE', 'CWR'])}
+
 UDP_HEADER = ['sport', 'dport']
+
+MANUAL_FEATURES     = ['time', 'is_ip', 'is_tcp', 'is_udp']
+TRANSPORT_FEATURES  = ['trans_{}'.format(feat) for feat in TCP_HEADER + TCP_FLAGS.values() if feat != 'flags']
+INTERNET_FEATURES   = ['inter_{}'.format(feat) for feat in IP_HEADER]
+FEATURES = MANUAL_FEATURES + INTERNET_FEATURES + TRANSPORT_FEATURES
 
 class BasicFeaturizer(object):
 
     def __init__(self):
 
         self.BasicFeatures = self._feature_enum()
+        self.flag_masks = [2 ** i for i in range(8)]
 
     def _feature_enum(self):
         """
-        Returns an Enum mapping 'time' and all features in IP_HEADER and TCP_HEADER
+        Returns an Enum mapping 'time' and all features in FEATURES
         to a range of values beginning at 0
         """
 
-        return Enum('Features', { feat : i for i, feat in enumerate(['time', 'is_tcp', 'is_ip'] + IP_HEADER + TCP_HEADER) })
+        return Enum('Features', { feat : i for i, feat in enumerate(FEATURES) })
 
     def featurize(self, raw_pkt, timestamp=None):
         """
@@ -40,32 +49,50 @@ class BasicFeaturizer(object):
 
         features[self.BasicFeatures['is_tcp'].value] = 1 if TCP in raw_pkt else 0
         features[self.BasicFeatures['is_ip'].value] = 1 if IP in raw_pkt else 0
+        features[self.BasicFeatures['is_udp'].value] = 1 if UDP in raw_pkt else 0
 
         for feat in IP_HEADER:
+            index = self.internet_index(feat)
             if IP in raw_pkt:
-                features[self.BasicFeatures[feat].value] = getattr(raw_pkt[IP], feat)
+                features[index] = getattr(raw_pkt[IP], feat)
             else:
-                features[self.BasicFeatures[feat].value] = 0    
+                features[index] = 0    
 
         for feat in TCP_HEADER:
-            if TCP in raw_pkt:
-                features[self.BasicFeatures[feat].value] = getattr(raw_pkt[TCP], feat)
-            elif UDP in raw_pkt and feat in UDP_HEADER:
-                features[self.BasicFeatures[feat].value] = getattr(raw_pkt[UDP], feat)
+            if feat == 'flags' and TCP in raw_pkt:
+                flag_array = self.extract_flags(int(getattr(raw_pkt[TCP], feat)))
+                for i in range(len(flag_array)):
+                    index = self.transport_index(TCP_FLAGS[i])
+                    features[index] = flag_array[i]
             else:
-                features[self.BasicFeatures[feat].value] = 0
-
+                index = self.transport_index(feat)
+                if TCP in raw_pkt:
+                        features[index] = getattr(raw_pkt[TCP], feat)
+                elif UDP in raw_pkt and feat in UDP_HEADER:
+                    features[index] = getattr(raw_pkt[UDP], feat)
+                else:
+                    features[index] = 0
         return features
 
+    def internet_index(self, feat):
+        name = 'inter_{}'.format(feat)
+        return self.BasicFeatures[name].value
+
+    def transport_index(self, feat):
+        name = 'trans_{}'.format(feat)
+        return self.BasicFeatures[name].value        
+
+    def extract_flags(self, flag_value):
+        flag_array = [int(flag_value & flag_mask > 0) for flag_mask in self.flag_masks]
+        return flag_array
 
 class CountBasedFeaturizer(BasicFeaturizer):
 
     def __init__(self, pkt_window=50):
+        super(CountBasedFeaturizer, self).__init__()
 
         self.pkt_window = pkt_window
         self.pkt_history = deque()
-
-        self.BasicFeatures = super(type(self), self)._feature_enum()
 
         self.feature_stats = { feat : defaultdict(int) for feat in self.BasicFeatures }
 
@@ -117,11 +144,10 @@ class CountBasedFeaturizer(BasicFeaturizer):
 class TimeBasedFeaturizer(BasicFeaturizer):
 
     def __init__(self, sec_window=10):
+        super(TimeBasedFeaturizer, self).__init__()
 
         self.sec_window = sec_window
         self.pkt_history = deque()
-
-        self.BasicFeatures = super(type(self), self)._feature_enum()
 
         self.feature_stats = { feat : defaultdict(int) for feat in self.BasicFeatures }
 
