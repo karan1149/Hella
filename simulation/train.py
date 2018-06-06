@@ -1,10 +1,10 @@
 import sys, os
 sys.path.append(os.path.expandvars('../ml'))
-from featurizer import BasicFeaturizer, CountBasedFeaturizer, TimeBasedFeaturizer, BasicFeaturizerUDP
+from featurizer import BasicFeaturizer, CountBasedFeaturizer, TimeBasedFeaturizer
 import argparse
 from simulate import Simulator
 
-featurizer_classes = { 1: BasicFeaturizer, 2: CountBasedFeaturizer, 3: TimeBasedFeaturizer, 4: BasicFeaturizerUDP}
+featurizer_classes = { 1: BasicFeaturizer, 2: CountBasedFeaturizer, 3: TimeBasedFeaturizer}
 # automatically generated help string for argparse
 featurizer_help_string = ' | '.join([str(i) for i in sorted(featurizer_classes.keys())])
 
