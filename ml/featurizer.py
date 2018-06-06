@@ -8,13 +8,13 @@ import time
 
 IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto']
 
-TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'flags', 'window']
+TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'window']
 TCP_FLAGS = {i:val for i,val in enumerate(['FIN', 'SYN', 'RST', 'PSH', 'ACK', 'URG', 'ECE', 'CWR'])}
 
 UDP_HEADER = ['sport', 'dport']
 
 MANUAL_FEATURES     = ['time', 'is_ip', 'is_tcp', 'is_udp']
-TRANSPORT_FEATURES  = ['trans_{}'.format(feat) for feat in TCP_HEADER + TCP_FLAGS.values() if feat != 'flags']
+TRANSPORT_FEATURES  = ['trans_{}'.format(feat) for feat in TCP_HEADER + TCP_FLAGS.values()]
 INTERNET_FEATURES   = ['inter_{}'.format(feat) for feat in IP_HEADER]
 FEATURES = MANUAL_FEATURES + INTERNET_FEATURES + TRANSPORT_FEATURES
 
@@ -59,19 +59,21 @@ class BasicFeaturizer(object):
                 features[index] = 0    
 
         for feat in TCP_HEADER:
-            if feat == 'flags' and TCP in raw_pkt:
-                flag_array = self.extract_flags(int(getattr(raw_pkt[TCP], feat)))
-                for i in range(len(flag_array)):
-                    index = self.transport_index(TCP_FLAGS[i])
-                    features[index] = flag_array[i]
+            index = self.transport_index(feat)
+            if TCP in raw_pkt:
+                    features[index] = getattr(raw_pkt[TCP], feat)
+            elif UDP in raw_pkt and feat in UDP_HEADER:
+                features[index] = getattr(raw_pkt[UDP], feat)
             else:
-                index = self.transport_index(feat)
-                if TCP in raw_pkt:
-                        features[index] = getattr(raw_pkt[TCP], feat)
-                elif UDP in raw_pkt and feat in UDP_HEADER:
-                    features[index] = getattr(raw_pkt[UDP], feat)
-                else:
-                    features[index] = 0
+                features[index] = 0
+
+        flag_array = self.extract_flags(0)
+        if TCP in raw_pkt:
+            flag_array = self.extract_flags(int(getattr(raw_pkt[TCP], 'flags')))
+        for i in range(len(flag_array)):
+            index = self.transport_index(TCP_FLAGS[i])
+            features[index] = flag_array[i]
+
         return features
 
     def internet_index(self, feat):
