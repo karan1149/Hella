@@ -18,7 +18,13 @@ To actually create a dataset, use the `dataset.py` script.
 
 Note that sudo is required for Scapy. The `asset_file` can be any file in the assets directory downloaded by the above script, where smaller asset files will generally produce smaller datasets. The `data_file` is the output `.pkl` file. After the script is complete, the `.pkl` file will contain an array of Scapy packets resembling realistic car network traffic. You can use the `-h` flag with this script at any point to get help.
 
-Note that you may encounter occasional timeouts while this script runs, which should not cause any problems.
+Note that you may encounter occasional timeouts while this script runs, which should not cause any problems. Each asset file generates may generate anywhere from hundreds to tens of thousands of packets (or more).
+
+To accelerate this process and control the number of packets in the dataset, use the `dataset_batch.py` script as follows:
+
+```sudo python dataset_batch.py --num_packets=10000 --assets_path assets --data_file my_output_training_dataset.pkl```
+
+The script runs the previous dataset generation many times, sampling random asset files, until the required number of packets is reached. The `num_packets` is the number of packets to generate, the `assets_path` is the path to the `assets` folder (should just be "assets" unless the folder is moved), and the `data_file` is the path to save the output dataset to. Note that internally, some asset files are reserved for creating test datasets. The `--test` flag can also be passed to the script to use only these asset files, which is helpful for creating a dataset that can eventually be used for testing (after adding attacks to it, as detailed below).
 
 ### Model Training
 

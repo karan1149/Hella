@@ -32,5 +32,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    simulator = Simulator(args.model_file, args.data_file, True, int(args.verbose), featurizer=featurizer_classes[args.featurizer])
+    simulator = Simulator(args.model_file, args.data_file, None, None, True, int(args.verbose), featurizer=featurizer_classes[args.featurizer])
     simulator.run()
