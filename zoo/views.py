@@ -26,8 +26,8 @@ def index():
       models_info = json.load(m)
   # Take all files in the appropriate directories matching ".pkl"
   try:
-    dataset_names = [(make_name_pretty(name), name, datasets_info[name]) for name in os.listdir(dataset_dir) if name.endswith('.pkl')]
-    model_names = [(make_name_pretty(name), name, models_info[name]) for name in os.listdir(model_dir) if name.endswith('.pkl')]
+    dataset_names = sorted([(make_name_pretty(name), name, datasets_info[name]) for name in os.listdir(dataset_dir) if name.endswith('.pkl')])
+    model_names = sorted([(make_name_pretty(name), name, models_info[name]) for name in os.listdir(model_dir) if name.endswith('.pkl')])
   except KeyError as e:
     raise KeyError(str(e) + " could not be found in info.json. Append this name to info.json to fix this error.")
   return render_template('index.html', dataset_names=dataset_names, model_names=model_names)
