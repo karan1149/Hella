@@ -107,16 +107,20 @@ function makeChart(info){
 }
 
 function populateBoxes(info){
+	console.log(info);
 	left = document.getElementById("left");
 	mid = document.getElementById("mid");
 	right = document.getElementById("right");
 
 	auc = round(info['roc_auc'], 3).toString()
-	auc = auc[0] == '0' ? auc.substring(1) : auc;
+	if (auc.length > 1 && auc[0] == '0')
+		auc = auc.substring(1);
 	tpp = round(info['time'], 3).toString();
-	tpp = tpp[0] == '0' ? tpp.substring(1) : tpp;
+	if (tpp.length > 1 && tpp[0] == '0')
+		tpp = tpp.substring(1);
 	kpi = round(info['roc_auc'] / info['time'], 2).toString();
-	kpi = kpi[0] == '0' ? kpi.substring(1) : kpi;
+	if (kpi.length > 1 && kpi[0] == '0')
+		kpi = kpi.substring(1);
 
 	left.innerText = auc;
 	mid.innerText = tpp;
