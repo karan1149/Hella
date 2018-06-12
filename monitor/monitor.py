@@ -58,10 +58,10 @@ class Monitor():
                     else:
                         data_points.append(Data_point(p, malicious=False))
             elif self.attack_type == SYN_FLOOD_ATTACK_TYPE:
-                src_ips = []
+                src_ips = set()
                 for p in pkts:
                     if p[IP].src in src_ips: continue
-                    else: src_ips.append(p[IP].src)
+                    else: src_ips.add(p[IP].src)
                     syn_flood_pkt = p.copy()
                     syn_flood_pkt[IP].remove_payload()
                     syn_flood_pkt = syn_flood_pkt / TCP(flags='S') / ('X'*10)
