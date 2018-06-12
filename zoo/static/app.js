@@ -220,7 +220,7 @@ function addToProgress(update, totalLength){
 	} else {
 		node.className = "progress-bar progress-bar-danger";
 	}
-	node.style.width = 100.0 / totalLength + "%";
+	node.style.width = 103.0 / totalLength + "%";
 	wrapper.appendChild(node);
 }
 
