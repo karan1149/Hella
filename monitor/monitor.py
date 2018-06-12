@@ -51,12 +51,18 @@ class Monitor():
             if self.attack_type == FUZZ_ATTACK_TYPE:
                 for p in pkts:
                     if random.random() < FUZZ_THRESHOLD:
-                        fuzzed = fuzz(p)
-                        data_points.append(Data_point(fuzzed, malicious=True))
+                        fuzzed_pkt = p[Ether].copy()
+                        fuzzed_pkt.remove_payload()
+                        fuzzed_pkt = fuzzed_pkt / fuzz(IP(src=p[IP].src,
+                            dst=p[IP].dst) / TCP() if TCP in p else UDP())
+                        data_points.append(Data_point(fuzzed_pkt, malicious=True))
                     else:
                         data_points.append(Data_point(p, malicious=False))
             elif self.attack_type == SYN_FLOOD_ATTACK_TYPE:
+                src_ips = set()
                 for p in pkts:
+                    if p[IP].src in src_ips: continue
+                    else: src_ips.add(p[IP].src)
                     syn_flood_pkt = p.copy()
                     syn_flood_pkt[IP].remove_payload()
                     syn_flood_pkt = syn_flood_pkt / TCP(flags='S') / ('X'*10)
@@ -71,19 +77,17 @@ class Monitor():
                 ip = pkts[0][IP].copy()
                 ip.remove_payload()
 
-                # TODO: this should be UDP and not TCP once
-                # UDP featurization works
-                p = ether / ip.copy() / TCP() / ('X'*10)
+                p = ether / ip.copy() / UDP() / ('X'*10)
                 p[IP].id = 42
                 p[IP].flags = 'MF'
                 data_points.append(Data_point(p, malicious=True))
 
-                p = ether / ip.copy() / TCP() / ('X'*116)
+                p = ether / ip.copy() / UDP() / ('X'*116)
                 p[IP].id = 42
                 p[IP].frag = 48
                 data_points.append(Data_point(p, malicious=True))
 
-                p = ether / ip.copy() / TCP() / ('X'*224)
+                p = ether / ip.copy() / UDP() / ('X'*224)
                 p[IP].id = 42
                 p[IP].flags = 'MF'
                 data_points.append(Data_point(p, malicious=True))
