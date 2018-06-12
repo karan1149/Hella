@@ -3,11 +3,17 @@ function makeChart(info){
 	var accuracy = metrics[0];
 	var recall = metrics[1]; 
 	var precision = metrics[2];
+	var f1 = metrics[3];
 	var points = info['points'];
+	var false_negatives = metrics[4][1][0];
+	var false_positives = metrics[4][0][1];
+	var true_negatives = metrics[4][0][0];
+	var true_positives = metrics[4][1][1];
 
 	accuracy = round(accuracy * 100, 2);
 	precision = round(precision * 100, 2);
 	recall = round(recall * 100, 2);
+	f1 = round(f1 * 100, 2);
 
 
 	container = document.getElementById("results-container");
@@ -15,30 +21,37 @@ function makeChart(info){
 
 	var ctx = document.getElementById("barChart");
 	var ctx2 = document.getElementById("lineChart");
+	var ctx3 = document.getElementById("pieChart");
 
-	if (ctx != null && ctx2 != null){
+	if (ctx != null && ctx2 != null && ctx3 != null){
 		ctx.parentNode.removeChild(ctx);
 		ctx2.parentNode.removeChild(ctx2);
+		ctx3.parentNode.removeChild(ctx3);
 		ctx = document.createElement('canvas');
 		ctx2 = document.createElement('canvas');
+		ctx3 = document.createElement('canvas');
 		ctx.setAttribute('id', 'barChart');
 		ctx2.setAttribute('id', 'lineChart');
+		ctx3.setAttribute('id', 'pieChart');
+		container.appendChild(ctx3);
 		container.appendChild(ctx);
 		container.appendChild(ctx2);
 	}
 	var myChart = new Chart(ctx, {
 	    type: 'horizontalBar',
 	    data: {
-	        labels: ["Accuracy (" + accuracy + "%)", "Recall (" + recall + "%)", "Precision (" + precision + "%)"],
+	        labels: ["Accuracy (" + accuracy + "%)", "Recall (" + recall + "%)", "Precision (" + precision + "%)", "F1 Score (" + f1 + "%)"],
 	        datasets: [{
 	        	label: "Percent of test examples",
-	            data: [accuracy, recall, precision],
+	            data: [accuracy, recall, precision, f1],
 	            backgroundColor: [
+	            	'rgba(35, 150, 102, 0.2)',
 	                'rgba(255, 99, 132, 0.2)',
 	                'rgba(54, 162, 235, 0.2)',
 	                'rgba(255, 206, 86, 0.2)',
 	            ],
 	            borderColor: [
+	            	'rgba(35, 150, 102, 1)',
 	                'rgba(255,99,132,1)',
 	                'rgba(54, 162, 235, 1)',
 	                'rgba(255, 206, 86, 1)',
@@ -47,7 +60,7 @@ function makeChart(info){
 	        }]
 	    },
 	    options: {
-	    	animation: {duration: 2000},
+	    	animation: {duration: 6000},
 	    	title: {text: "Accuracy Metrics", display: true, fontSize: 20, fontColor: '#FFFFFF', padding: 20, fontStyle: 'normal'},
 	    	legend: {display: false},
 	    	barThickness: 20,
@@ -89,7 +102,7 @@ function makeChart(info){
 	        }]
 	    },
 	    options: {
-	    	animation: {duration: 2000},
+	    	animation: {duration: 7000},
 	    	title: {text: "ROC Curve (area = " + round(info['roc_auc'], 3) + ")", display: true, fontSize: 20, fontColor: '#FFFFFF', padding: 20, fontStyle: 'normal'},
 	    	legend: {display: false},
 	    	scales: {
@@ -104,6 +117,31 @@ function makeChart(info){
 	    	        }
 	    }
 	});
+
+	var myChart3 = new Chart(ctx3, {
+    type: 'doughnut',
+    data: {
+    	datasets: [{
+    		data: [true_positives + true_negatives, false_positives, false_negatives],
+    		backgroundColor: [
+    			'rgba(92, 184, 92, 1)',
+    			'rgba(240, 173, 78, 1)',
+    			'rgba(217, 83, 79, 1)',
+    		],
+    		borderColor: [
+    			'rgba(92, 184, 92, .2)',
+    			'rgba(240, 173, 78, .2)',
+    			'rgba(217, 83, 79, .2)',
+    		],
+    		borderWidth: [0, 0, 0]
+
+    	}],
+    	labels: ["Correctly classified", "False positives: incorrectly classified, benign", "False negatives: incorrectly classified, malignant"]
+    },
+    options: {
+    	"animation": {duration: 3500},
+    }
+});
 }
 
 function populateBoxes(info){
@@ -186,6 +224,7 @@ function sendRequest(){
             var responses = http.responseText.split('\n');
 
             response = JSON.parse(responses[responses.length - 1]);
+            response.totalLength = totalLength;
         	loadingDots.style.display = "none";
         	message.innerHTML = "";
         	button.style.display = "inline-block";
