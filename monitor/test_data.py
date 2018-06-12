@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 class Data_point():
     """
     Simple class to represent a point of test data
@@ -33,6 +35,11 @@ class Test_data():
     def __init__(self, data_points):
         self.dps = data_points
 
+        # build index to make dp_for_pkt faster
+        self.index = defaultdict(list)
+        for i, dp in enumerate(self.dps):
+            self.index[dp.pkt.time].append(i)
+
     def false_positive_dps(self):
         return list(filter(lambda dp: dp.is_false_positive(), self.dps))
 
@@ -52,6 +59,7 @@ class Test_data():
         return list(filter(lambda dp: dp.is_classified(), self.dps))
 
     def dp_for_pkt(self, pkt):
-        match = list(filter(lambda dp: dp.pkt == pkt, self.dps))
-        # assumes at most one packet will be exactly equal
-        return match[0] if match else None
+        possibilities = self.index[pkt.time]
+        match = list(filter(lambda i: self.dps[i].prediction == None, possibilities))
+        # assumes pkts with same timestamps (if they exist) have the same label
+        return self.dps[match[0]] if match else None
