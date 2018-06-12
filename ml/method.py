@@ -25,6 +25,7 @@ class Method():
     def load_model(self, model_file):
         try:
             self.model.load(model_file)
+            self.fr = getattr(sys.modules[__name__], self.model.featurizer)()
         except:
             print("Unable to load %s. Abort.)" % (model_file))
             exit(0)
@@ -45,9 +46,7 @@ class Method():
             self.api.perform_get(r)
 
     def handle_pkt(self, pkt):
-        fr = getattr(sys.modules[__name__], self.model.featurizer)()
-
-        featurized_pkt = fr.featurize(pkt)
+        featurized_pkt = self.fr.featurize(pkt)
         prediction = self.model.predict(featurized_pkt)
         ether = Ether(dst=ETH_BROADCAST, src=ETH_SRC)
         seer = Seer(malicious=prediction, data=pkt)

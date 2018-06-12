@@ -6,7 +6,7 @@ import random
 from headers import Seer
 from test_data import Data_point, Test_data
 
-FUZZ_THRESHOLD = .3 # fuzz 30% of packets
+FUZZ_THRESHOLD = .2 # fuzz 30% of packets
 NUM_SYNS = 100 # send 100 syn packets per src IP for syn flooding
 ATTACKER_ETHER = 'd4:d5:d6:d7:d7:d9' # for arp spoof attack
 
@@ -43,6 +43,7 @@ class Monitor():
         self.test_data = test_data
 
     def create_test_data(self, pkts):
+        pkts = pkts[:2000]
         data_points = []
         if not self.attack_type:
             data_points.extend([Data_point(p, malicious=False) for p in pkts])
