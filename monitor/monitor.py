@@ -56,7 +56,7 @@ class Monitor():
                         fuzzed_pkt = p[Ether].copy()
                         fuzzed_pkt.remove_payload()
                         fuzzed_pkt = fuzzed_pkt / fuzz(IP(src=p[IP].src,
-                            dst=p[IP].dst, len=random.randrange(0, 1e4)) / TCP() if TCP in p else UDP())
+                            dst=p[IP].dst) / TCP() if TCP in p else UDP())
                         fuzzed_pkt = Ether(str(fuzzed_pkt))
                         data_points.append(Data_point(fuzzed_pkt, malicious=True))
                     else:
