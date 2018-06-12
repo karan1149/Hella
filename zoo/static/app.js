@@ -140,6 +140,7 @@ function makeChart(info){
     },
     options: {
     	"animation": {duration: 3500},
+    	title: {text: "Anomaly Detection Results", display: true, fontSize: 20, fontColor: '#FFFFFF', padding: 20, fontStyle: 'normal'},
     }
 });
 }
