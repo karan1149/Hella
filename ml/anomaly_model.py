@@ -87,7 +87,6 @@ class AnomalyModel(object):
     Loads a model dump from path and initializes class members.
     """
     save_dict = joblib.load(path)
-    print(save_dict)
     self.model = save_dict['model']
     self.featurizer = save_dict['featurizer']
     if 'random' in save_dict:
