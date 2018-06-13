@@ -6,7 +6,8 @@ import random
 from headers import Seer
 from test_data import Data_point, Test_data
 
-FUZZ_THRESHOLD = .2 # fuzz 30% of packets
+FUZZ_THRESHOLD = .2 # fuzz 20% of packets
+EMPTY_THRESHOLD = .2
 NUM_SYNS = 100 # send 100 syn packets per src IP for syn flooding
 ATTACKER_ETHER = 'd4:d5:d6:d7:d7:d9' # for arp spoof attack
 
@@ -14,6 +15,7 @@ FUZZ_ATTACK_TYPE = 'fuzz'
 SYN_FLOOD_ATTACK_TYPE = 'syn-flood'
 TEARDROP_ATTACK_TYPE = 'teardrop'
 DNS_ATTACK_TYPE = 'dns'
+EMPTY_ATTACK_TYPE = 'empty'
 ATTACK_TYPES = [FUZZ_ATTACK_TYPE, SYN_FLOOD_ATTACK_TYPE, \
     TEARDROP_ATTACK_TYPE]
 
@@ -54,8 +56,15 @@ class Monitor():
                         fuzzed_pkt = p[Ether].copy()
                         fuzzed_pkt.remove_payload()
                         fuzzed_pkt = fuzzed_pkt / fuzz(IP(src=p[IP].src,
-                            dst=p[IP].dst) / TCP() if TCP in p else UDP())
+                            dst=p[IP].dst, len=p[IP].len) / TCP() if TCP in p else UDP())
+                        fuzzed_pkt = Ether(str(fuzzed_pkt))
                         data_points.append(Data_point(fuzzed_pkt, malicious=True))
+                    else:
+                        data_points.append(Data_point(p, malicious=False))
+            elif self.attack_type == EMPTY_ATTACK_TYPE:
+                for p in pkts:
+                    if random.random() < EMPTY_THRESHOLD:
+                        data_points.append(Data_point(Ether() / IP(len=0), malicious=True))
                     else:
                         data_points.append(Data_point(p, malicious=False))
             elif self.attack_type == SYN_FLOOD_ATTACK_TYPE:

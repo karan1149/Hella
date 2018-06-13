@@ -1,3 +1,12 @@
 {
-	"api_old_packets_500_count.pkl": "Old-API-generated dataset with ~79k packets."
+	"empty_attack_10k.pkl": "Test dataset of 10,000 unseen API packets, 20% of which are randomly replaced with empty IP packets labeled as anomalous.",
+	"empty_attack_1k.pkl": "Test dataset of 1,000 unseen API packets, 20% of which are randomly replaced with empty IP packets labeled as anomalous.",
+	"empty_attack_600.pkl": "Test dataset of 600 unseen API packets, 20% of which are randomly replaced with empty IP packets labeled as anomalous.",
+	"fuzz_attack_10k.pkl": "Test dataset of 10,000 unseen API packets, 20% of which are randomly replaced with fuzzed (randomized) packets labeled as anomalous.",
+	"fuzz_attack_1k.pkl": "Test dataset of 1,000 unseen API packets, 20% of which are randomly replaced with fuzzed (randomized) packets labeled as anomalous.",
+	"fuzz_attack_600.pkl": "Test dataset of 600 unseen API packets, 20% of which are randomly replaced with fuzzed (randomized) packets labeled as anomalous.",
+	"syn-flood_attack.pkl": "Test dataset of 101 unseen packets emulating a syn-flood attack.",
+	"teardrop_attack_10k.pkl": "Test dataset of 10,003 unseen packets that include a teardrop attack.",
+	"teardrop_attack_1k.pkl": "Test dataset of 1,003 unseen packets that include a teardrop attack.",
+	"teardrop_attack_600.pkl": "Test dataset of 603 unseen packets that include a teardrop attack."
 }

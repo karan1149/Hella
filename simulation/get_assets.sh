@@ -26,7 +26,6 @@ assets="1ph8A_LM6dFV0GKl3OF0dDcIT3fnGnAly"
 
 to_download_assets=(assets)
 
-# TODO: make this logic nicer.
 for i in {0..0}
 do
   echo "Downloading ${to_download_assets[$i]}.zip for training"

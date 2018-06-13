@@ -66,7 +66,7 @@ class Simulator():
         self.monitor.send()
         start_time = time.time()
         # time out after 10 seconds
-        while not self.monitor.completed() and time.time() - start_time < 10:
+        while not self.monitor.completed():
             sleep(.1)
         self.monitor.show_results()
 

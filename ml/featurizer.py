@@ -6,7 +6,7 @@ from enum import Enum
 
 import time
 
-IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto']
+IP_HEADER = ['len', 'id', 'frag', 'ttl', 'proto', 'src', 'dst']
 
 TCP_HEADER = ['sport', 'dport', 'seq', 'ack', 'window']
 TCP_FLAGS = {i:val for i,val in enumerate(['FIN', 'SYN', 'RST', 'PSH', 'ACK', 'URG', 'ECE', 'CWR'])}
@@ -54,7 +54,9 @@ class BasicFeaturizer(object):
         for feat in IP_HEADER:
             index = self.internet_index(feat)
             if IP in raw_pkt:
-                features[index] = getattr(raw_pkt[IP], feat)
+                features[index] = getattr(raw_pkt[IP], feat)              
+                if feat in ['src', 'dst']:
+                    features[index] = int(features[index].replace('.', ''))                
             else:
                 features[index] = 0    
 
@@ -90,7 +92,7 @@ class BasicFeaturizer(object):
 
 class CountBasedFeaturizer(BasicFeaturizer):
 
-    def __init__(self, pkt_window=50):
+    def __init__(self, pkt_window=20):
         super(CountBasedFeaturizer, self).__init__()
 
         self.pkt_window = pkt_window
@@ -145,7 +147,7 @@ class CountBasedFeaturizer(BasicFeaturizer):
 
 class TimeBasedFeaturizer(BasicFeaturizer):
 
-    def __init__(self, sec_window=10):
+    def __init__(self, sec_window=.01):
         super(TimeBasedFeaturizer, self).__init__()
 
         self.sec_window = sec_window

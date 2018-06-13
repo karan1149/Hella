@@ -1,3 +1,9 @@
 {
-	"isolation_forest_countbased_trainct80k.pkl": "IsolationForest with count-based featurization. Trained on old-API-simulated dataset."
+	"baseline_random_model.pkl": "Baseline model that randomly predicts a packet is malicious with 0.2 probability.",
+	"elliptic_envelope_0.2_100k.pkl": "Naive model that fits an ellipse around training data to find anomalies. Trained using a contamination hyperparameter of 0.2 on 100k packets.",
+	"elliptic_envelope_0.3_100k.pkl": "Naive model that fits an ellipse around training data to find anomalies. Trained using a contamination hyperparameter of 0.3 on 100k packets.",
+	"isolation_forest_100k.pkl": "Model that isolates samples using an ensemble of random trees to find anomalies. Uses a sequence-independent featurizer. Trained using a contamination hyperparameter of 0.1 on 100k packets.",
+	"isolation_forest_400k.pkl": "Model that isolates samples using an ensemble of random trees to find anomalies. Uses a sequence-independent featurizer. Trained using a contamination hyperparameter of 0.1 on 400k packets.",
+	"isolation_forest_count-based_400k.pkl": "Model that isolates samples using an ensemble of random trees to find anomalies. Uses a count-based featurizer. Trained using a contamination hyperparameter of 0.1 on 400k packets.",
+	"isolation_forest_time-based_400k.pkl": "Model that isolates samples using an ensemble of random trees to find anomalies. Uses a time-based featurizer. Trained using a contamination hyperparameter of 0.1 on 400k packets."
 }

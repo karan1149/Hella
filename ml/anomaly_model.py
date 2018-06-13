@@ -6,6 +6,7 @@ import sklearn.metrics as metrics
 import numpy as np
 #import matplotlib.pyplot as plt
 DEBUG = True
+import random
 
 class AnomalyModel(object):
   def __init__(self):
@@ -13,6 +14,7 @@ class AnomalyModel(object):
     """
     self.model = IsolationForest()
     self.featurizer = None
+    self.random = None
 
   def predict(self, packet):
     """
@@ -20,9 +22,14 @@ class AnomalyModel(object):
     Dimensionality of packet is (n_features), 0 if inlier, 1 if anomaly
     """
     print(packet, len(packet))
-    pred = self.model.predict([packet])[0]
-    return 1 if pred == -1 else 0
-
+    if self.random is None:
+        pred = self.model.predict([packet])[0]
+        return 1 if pred == -1 else 0
+    else:
+        if random.random() < self.random:
+            return 1
+        else:
+            return 0
 
   def predicts(self, packets):
     """
@@ -44,8 +51,10 @@ class AnomalyModel(object):
   # Returns tuple of fpr, tpr points for ROC curve, along with area
   # under curve
   def roc_points(self, X, Y):
+    if self.random is not None:
+        return [0, 0], [0, 0], 0
     predictions = self.model.decision_function(X)
-    labels = [-1 if y == 1 else 1 for y in Y]
+    labels = [-1 if y == 1 else 1 for y in Y] 
     fpr, tpr, thresholds = metrics.roc_curve(labels, predictions)
     return fpr.tolist(), tpr.tolist(), np.trapz(tpr, fpr)
 
@@ -71,7 +80,7 @@ class AnomalyModel(object):
     """
     Dumps the model to the given path.
     """
-    joblib.dump({'model': self.model, 'featurizer': self.featurizer}, path)
+    joblib.dump({'model': self.model, 'featurizer': self.featurizer, 'random': self.random}, path)
 
   def load(self, path):
     """
@@ -80,3 +89,7 @@ class AnomalyModel(object):
     save_dict = joblib.load(path)
     self.model = save_dict['model']
     self.featurizer = save_dict['featurizer']
+    if 'random' in save_dict:
+        self.random = save_dict['random']
+    else:
+        self.random = None

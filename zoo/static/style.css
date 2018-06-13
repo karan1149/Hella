@@ -7,7 +7,8 @@ select {color: black;}
 #message {font-size: 20px;}
 #tagline {font-size: 30px;}
 #lineChart {float:center; margin-top: 30px; margin-bottom: 30px;}
-#barChart {float:center;}
+#barChart {float:center; margin-top: 30px; margin-bottom: 30px;}
+#pieChart {float:center; margin-top: 30px;}
 #results-container { width: 50%; margin-left:auto; margin-right:auto; display: none; margin-bottom: 20px;}
 p {margin-top: .5em; margin-bottom: 25px;}
 #loading-dots { height: 32px; display: none; position: relative; top:1px;}
