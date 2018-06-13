@@ -9,12 +9,12 @@
 #
 
 
-# Ensure that we are running with python3
-version="$(python --version)"
-version=($version)
-if  [[ ${version[1]} != 3* ]];
+# Ensure that we are running with python2
+ispy2=`python -c 'import sys; print sys.version_info > (2, 7) and sys.version_info < (3, 0)'`
+if [ $ispy2 != "True" ];
 then
-    echo "You should be running with Python 3."
+    echo $ispy2
+    echo "You should be running with Python 2."
     exit
 fi
 
@@ -22,22 +22,16 @@ fi
 # with their unique Google Drive ID.
 
 # Data
-api_old_packets_500_count="1PHkENtFJFWZ7fwt16VtRDF5tuQqm8Iz9"
+data="https://drive.google.com/open?id=17AdX_puvVC3c7JqW6iHB7Ys38IOtqFdR"
 
-# Models
-isolation_forest_countbased_trainct80k="1Dqn2VOMC44LB-JsU55qCol3ZokF78COm"
+to_download_data=(data)
 
-to_download_models=(isolation_forest_countbased_trainct80k)
-to_download_data=(api_old_packets_500_count)
-
-# TODO: make this logic nicer.
 for i in {0..0}
 do
-  echo "Downloading model ${to_download_models[$i]}.pkl"
-  python gdrive.py ${!to_download_models[$i]} models/${to_download_models[$i]}.pkl
-
-  echo "Downloading data ${to_download_data[$i]}.pkl"
-  python gdrive.py ${!to_download_data[$i]} datasets/${to_download_data[$i]}.pkl
+  echo "Downloading ${to_download_data[$i]}.zip for training"
+  python gdrive.py ${!to_download_assets[$i]} assets.zip
+  unzip zoo_models_datasets_final.zip
 done
 
 exit 0
+
